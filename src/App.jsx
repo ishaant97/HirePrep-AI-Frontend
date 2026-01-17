@@ -1,10 +1,10 @@
-import Auth from './components/Auth/Auth'
+import AppRouter from "./routes/AppRouter"
 
 function App() {
 
   return (
     <>
-      <Auth />
+      <AppRouter />
     </>
   )
 }
