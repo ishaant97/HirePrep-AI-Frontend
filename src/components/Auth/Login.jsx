@@ -1,15 +1,30 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router";
+import { useAuth } from '../../context/AuthContext';
 
 function Login({ onSwitchToSignup }) {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const { login } = useAuth();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add your login logic here
-        console.log('Login:', { email, password, rememberMe });
+        try {
+            await login({ email, password });
+            navigate('/dashboard');
+        }
+        catch (err) {
+            console.log(err);
+            if (err.response && err.response.data && err.response.data.message) {
+                alert(err.response.data.message);
+            } else {
+                alert("Login Failed");
+            }
+        }
+        // console.log('Login:', { email, password, rememberMe });
     };
 
     return (
@@ -41,7 +56,7 @@ function Login({ onSwitchToSignup }) {
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-gray-700/70 border border-purple-500/40 focus:border-purple-400 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-0 transition-all shadow-inner shadow-black/40"
                         required
                     />
                 </div>
@@ -58,7 +73,7 @@ function Login({ onSwitchToSignup }) {
                             placeholder="Enter your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                            className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-gray-700/70 border border-purple-500/40 focus:border-purple-400 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-0 transition-all shadow-inner shadow-black/40"
                             required
                         />
                         <button
@@ -81,7 +96,7 @@ function Login({ onSwitchToSignup }) {
                 </div>
 
                 {/* Remember Me & Forgot Password */}
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <input
                             type="checkbox"
@@ -100,12 +115,12 @@ function Login({ onSwitchToSignup }) {
                     >
                         Forgot password?
                     </button>
-                </div>
+                </div> */}
 
                 {/* Submit Button */}
                 <button
                     type="submit"
-                    className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+                    className="w-full py-3 bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 text-white font-semibold rounded-2xl transition-all duration-200 shadow-lg shadow-purple-800/60 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-purple-500/40"
                 >
                     Log in
                 </button>
