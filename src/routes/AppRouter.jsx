@@ -3,6 +3,7 @@ import Dashboard from "../components/Dashboard/Dashboard";
 import ProtectedRoutes from "./ProtectedRoutes";
 import ErrorPage from "../components/404/ErrorPage";
 import Auth from "../components/Auth/Auth";
+// import ResumeUpload from "../components/ResumeUpload/ResumeUpload";
 
 function AppRouter() {
     return <BrowserRouter>
@@ -14,8 +15,8 @@ function AppRouter() {
 
             <Route element={<ProtectedRoutes />}>
                 <Route path="/dashboard" element={<Dashboard />} />
-                {/* <Route path="/resume" element={<Resume />} />
-                <Route path="/jobs" element={<Jobs />} />
+                {/* <Route path="/resumeUpload" element={<ResumeUpload />} /> */}
+                {/* <Route path="/jobs" element={<Jobs />} />
                 <Route path="/analysis" element={<Analysis />} />
                 <Route path="/profile" element={<Profile />} /> */}
             </Route>
