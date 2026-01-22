@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
             } catch (err) {
                 setUser(null);
                 setIsAuthenticated(false);
+                console.error("Auth check failed", err);
             } finally {
                 setLoading(false);
             }
