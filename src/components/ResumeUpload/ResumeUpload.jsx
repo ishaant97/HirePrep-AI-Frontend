@@ -73,19 +73,19 @@ function ResumeUpload() {
         setIsDragging(false);
 
         const file = e.dataTransfer.files[0];
-        if (file && (file.type === 'application/pdf' ||
-            file.type === 'application/msword' ||
-            file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
+        if (file && (file.type === 'application/pdf')) {
             setSelectedFile(file);
         } else {
-            alert('Please upload a PDF or Word document');
+            alert('Please upload a PDF file only.');
         }
     };
 
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
-        if (file) {
+        if (file && (file.type === 'application/pdf')) {
             setSelectedFile(file);
+        } else {
+            alert('Please upload a PDF file only.');
         }
     };
 
@@ -262,12 +262,12 @@ function ResumeUpload() {
                                     <p className="text-sm font-semibold text-gray-200 uppercase">
                                         {selectedFile ? selectedFile.name : 'Drop your PDF resume here or click to browse'}
                                     </p>
-                                    <p className="text-xs text-gray-400 font-medium">PDF, DOC, or DOCX up to 10MB</p>
+                                    <p className="text-xs text-gray-400 font-medium">PDF up to 10MB</p>
                                 </div>
                                 <input
                                     type="file"
                                     id="resume-file"
-                                    accept=".pdf,.doc,.docx"
+                                    accept=".pdf"
                                     onChange={handleFileSelect}
                                     className="hidden"
                                 />
