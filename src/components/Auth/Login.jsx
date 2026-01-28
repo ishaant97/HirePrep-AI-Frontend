@@ -7,7 +7,7 @@ function Login({ onSwitchToSignup }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
+    // const [rememberMe, setRememberMe] = useState(false);
     const { login } = useAuth();
 
     const handleSubmit = async (e) => {
