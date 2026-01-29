@@ -1,0 +1,9 @@
+export { default as Overview } from './Overview';
+export { default as PlacementProbability } from './PlacementProbability';
+export { default as JobRoles } from './JobRoles';
+export { default as SkillGapAnalysis } from './SkillGapAnalysis';
+export { default as CareerRoadmap } from './CareerRoadmap';
+export { default as ATSResumeScore } from './ATSResumeScore';
+export { default as Analytics } from './Analytics';
+export { default as InterviewQuestions } from './InterviewQuestions';
+export { default as Settings } from './Settings';
