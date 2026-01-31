@@ -4,6 +4,7 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import ErrorPage from "../components/404/ErrorPage";
 import Auth from "../components/Auth/Auth";
 import ResumeUpload from "../components/ResumeUpload/ResumeUpload";
+import Profile from "../components/Profile/Profile";
 
 function AppRouter() {
     return <BrowserRouter>
@@ -16,6 +17,7 @@ function AppRouter() {
             <Route element={<ProtectedRoutes />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/resumeUpload" element={<ResumeUpload />} />
+                <Route path="/profile" element={<Profile />} />
                 {/* <Route path="/jobs" element={<Jobs />} />
                 <Route path="/analysis" element={<Analysis />} />
                 <Route path="/profile" element={<Profile />} /> */}
