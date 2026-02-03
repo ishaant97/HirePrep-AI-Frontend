@@ -1,58 +1,44 @@
 import { useMemo, useState } from 'react';
 import api from '../../api/axios';
+import { useNavigate } from "react-router";
 
 function ResumeUpload() {
+    const navigate = useNavigate();
     const [selectedFile, setSelectedFile] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isParsing, setIsParsing] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [formData, setFormData] = useState({
         // Personal Information
-        fullName: '',
+        name: '',
         email: '',
         phone: '',
         linkedin: '',
         github: '',
-        portfolio: '',
 
-        // Additional Metrics (Manual Input)
+        // Academic & Skill Metrics
+        cgpa: '',
+        tenthPercent: '',
+        twelfthPercent: '',
+        backlogs: '0',
         communicationRating: '',
-        activeBacklogs: '0',
-        tenthPercentage: '',
-        twelfthPercentage: '',
-        hackathonParticipation: 'No',
+        hackathon: 'No',
 
-        // Education
-        education: [{
-            school: '',
-            degree: '',
-            fieldOfStudy: '',
-            startDate: '',
-            endDate: '',
-            cgpa: '',
-            description: ''
-        }],
+        // Career
+        desiredRole: '',
+        experienceLevel: 'Entry-Level',
 
-        // Experience
-        experience: [{
+        // Internships
+        internships: [{
             company: '',
-            position: '',
-            location: '',
-            startDate: '',
-            endDate: '',
-            description: ''
+            role: ''
         }],
 
         // Skills
         skills: [],
 
-        // Projects
-        projects: [{
-            name: '',
-            description: '',
-            technologies: '',
-            link: ''
-        }],
+        // Projects (just names)
+        projects: [],
 
         // Certifications
         certifications: []
@@ -99,33 +85,37 @@ function ResumeUpload() {
 
         try {
             const formDataToSend = new FormData();
-            formDataToSend.append('resume', selectedFile);
+            formDataToSend.append("resume", selectedFile);
 
-            // TODO: Replace with your actual ML Backend Endpoint
-            // const response = await fetch('YOUR_ML_BACKEND_URL/parse-resume', {
-            //     method: 'POST',
-            //     body: formDataToSend
-            // });
-            // const parsedData = await response.json();
+            const res = await api.post("/resume/parseResume", formDataToSend);
+            const parsedData = res.data;
+            console.log(parsedData);
 
-            // NOTE: When integrating, ensure you merge parsedData with existing manual fields
-            // setFormData(prev => ({
-            //     ...prev,
-            //     ...parsedData,
-            //     // Ensure manual fields aren't overwritten if the parser sends them as null/undefined
-            //     communicationRating: prev.communicationRating,
-            //     activeBacklogs: prev.activeBacklogs,
-            //     tenthPercentage: prev.tenthPercentage,
-            //     twelfthPercentage: prev.twelfthPercentage,
-            //     hackathonParticipation: prev.hackathonParticipation
-            // }));
+            // Map the API response to form data
+            setFormData(prev => ({
+                ...prev,
+                name: parsedData.name || prev.name,
+                email: parsedData.email || prev.email,
+                phone: parsedData.phone || prev.phone,
+                linkedin: parsedData.linkedin || prev.linkedin,
+                github: parsedData.github || prev.github,
+                cgpa: parsedData.cgpa?.toString() || prev.cgpa,
+                tenthPercent: parsedData.tenth_percent?.toString() || prev.tenthPercent,
+                twelfthPercent: parsedData.twelfth_percent?.toString() || prev.twelfthPercent,
+                backlogs: parsedData.backlogs?.toString() || prev.backlogs,
+                communicationRating: parsedData.communication_rating?.toString() || prev.communicationRating,
+                hackathon: parsedData.hackathon || prev.hackathon,
+                desiredRole: parsedData.desired_role || prev.desiredRole,
+                experienceLevel: parsedData.experience_level || prev.experienceLevel,
+                skills: parsedData.skills || prev.skills,
+                projects: parsedData.project || prev.projects,
+                certifications: parsedData.certifications || prev.certifications,
+                internships: parsedData.internships?.length > 0
+                    ? parsedData.internships
+                    : prev.internships
+            }));
 
-            // Mock simulation for UI feedback
-            setTimeout(() => {
-                alert('Sent to ML Parser. Forms will auto-fill with response data.');
-                setIsParsing(false);
-            }, 1500);
-
+            setIsParsing(false);
         } catch (error) {
             console.error('Error parsing resume:', error);
             alert('Failed to parse resume. Please try again.');
@@ -143,43 +133,12 @@ function ResumeUpload() {
         }
     };
 
-    const addEducation = () => {
+    const addInternship = () => {
         setFormData({
             ...formData,
-            education: [...formData.education, {
-                school: '',
-                degree: '',
-                fieldOfStudy: '',
-                startDate: '',
-                endDate: '',
-                cgpa: '',
-                description: ''
-            }]
-        });
-    };
-
-    const addExperience = () => {
-        setFormData({
-            ...formData,
-            experience: [...formData.experience, {
+            internships: [...formData.internships, {
                 company: '',
-                position: '',
-                location: '',
-                startDate: '',
-                endDate: '',
-                description: ''
-            }]
-        });
-    };
-
-    const addProject = () => {
-        setFormData({
-            ...formData,
-            projects: [...formData.projects, {
-                name: '',
-                description: '',
-                technologies: '',
-                link: ''
+                role: ''
             }]
         });
     };
@@ -193,27 +152,34 @@ function ResumeUpload() {
         setIsUploading(true);
 
         try {
+            // Filter out empty internships
+            const validInternships = formData.internships.filter(
+                intern => intern.company.trim() && intern.role.trim()
+            );
+
             const payload = {
-                fullName: formData.fullName,
+                name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
-                linkedin: formData.linkedin,
-                github: formData.github,
-                portfolio: formData.portfolio,
-                communicationRating: formData.communicationRating,
-                activeBacklogs: formData.activeBacklogs,
-                tenthPercentage: formData.tenthPercentage,
-                twelfthPercentage: formData.twelfthPercentage,
-                hackathonParticipation: formData.hackathonParticipation,
-                education: formData.education,
-                experience: formData.experience,
-                skills: formData.skills,
-                projects: formData.projects,
-                certifications: formData.certifications
+                linkedin: formData.linkedin || undefined,
+                github: formData.github || undefined,
+                cgpa: formData.cgpa ? parseFloat(formData.cgpa) : undefined,
+                tenth_percent: formData.tenthPercent ? parseFloat(formData.tenthPercent) : undefined,
+                twelfth_percent: formData.twelfthPercent ? parseFloat(formData.twelfthPercent) : undefined,
+                backlogs: formData.backlogs ? parseInt(formData.backlogs) : 0,
+                communication_rating: formData.communicationRating ? parseInt(formData.communicationRating) : undefined,
+                hackathon: formData.hackathon,
+                desired_role: formData.desiredRole || undefined,
+                experience: validInternships.length, // Calculate from internships count
+                experience_level: formData.experienceLevel,
+                skills: formData.skills.length > 0 ? formData.skills : undefined,
+                project: formData.projects.length > 0 ? formData.projects : undefined,
+                certifications: formData.certifications.length > 0 ? formData.certifications : undefined,
+                internships: validInternships.length > 0 ? validInternships : undefined
             };
 
             await api.post("/resume/save", payload);
-            alert('Profile submitted successfully for analysis!');
+            navigate('/dashboard');
         } catch (error) {
             console.error('Error uploading resume:', error);
             alert('Failed to upload resume. Please try again.');
@@ -241,8 +207,8 @@ function ResumeUpload() {
                     <p className="text-sm sm:text-lg text-purple-200/80">Upload your resume and provide details for Placement Prediction & Analysis</p>
                 </div>
 
-                <div className="grid gap-6 lg:grid-cols-[420px_minmax(0,1fr)] flex-1 min-h-0 overflow-hidden pb-4">
-                    {/* Left Section - Resume Upload & Manual Metrics */}
+                <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)] flex-1 min-h-0 overflow-hidden pb-4">
+                    {/* Left Section - Resume Upload Only */}
                     <div className="lg:h-full overflow-y-auto pr-2 custom-scrollbar space-y-6">
                         <div className="rounded-2xl bg-gray-900/40 backdrop-blur-xl shadow-2xl p-6 space-y-4 border border-white/10">
                             <div className="space-y-1">
@@ -291,72 +257,6 @@ function ResumeUpload() {
                                 </div>
                             )}
                         </div>
-
-                        {/* Academic & Skill Metrics - Manual Input Section */}
-                        <div className="rounded-2xl bg-gradient-to-br from-purple-900/40 to-indigo-900/40 backdrop-blur-xl shadow-2xl p-6 space-y-4 border border-purple-500/30">
-                            <div className="space-y-1">
-                                <h2 className="text-xl font-semibold text-white flex items-center gap-2">📊 Academic & Skill Metrics</h2>
-                                <p className="text-sm text-purple-300">Required for prediction models. Please fill manually.</p>
-                            </div>
-                            <div className="grid gap-4">
-                                <div className="space-y-1.5">
-                                    <label className={labelClass}>Communication Skills (1-5)</label>
-                                    <input
-                                        className={inputClass}
-                                        type="number"
-                                        min="1"
-                                        max="5"
-                                        placeholder="Rate out of 5"
-                                        value={formData.communicationRating}
-                                        onChange={(e) => setFormData({ ...formData, communicationRating: e.target.value })}
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className={labelClass}>Active Backlogs</label>
-                                    <input
-                                        className={inputClass}
-                                        type="number"
-                                        min="0"
-                                        placeholder="Enter 0 if none"
-                                        value={formData.activeBacklogs}
-                                        onChange={(e) => setFormData({ ...formData, activeBacklogs: e.target.value })}
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className={labelClass}>10th Percentage/CGPA</label>
-                                    <input
-                                        className={inputClass}
-                                        type="number"
-                                        step="0.01"
-                                        placeholder="e.g. 92.5"
-                                        value={formData.tenthPercentage}
-                                        onChange={(e) => setFormData({ ...formData, tenthPercentage: e.target.value })}
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className={labelClass}>12th Percentage/CGPA</label>
-                                    <input
-                                        className={inputClass}
-                                        type="number"
-                                        step="0.01"
-                                        placeholder="e.g. 89.0"
-                                        value={formData.twelfthPercentage}
-                                        onChange={(e) => setFormData({ ...formData, twelfthPercentage: e.target.value })}
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className={labelClass}>Have you participated in any Hackathons?</label>
-                                    <select
-                                        className={inputClass}
-                                        value={formData.hackathonParticipation}
-                                        onChange={(e) => setFormData({ ...formData, hackathonParticipation: e.target.value })}
-                                    >
-                                        <option value="No">No</option>
-                                        <option value="Yes">Yes</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     {/* Right Section - Form Fields */}
@@ -377,8 +277,8 @@ function ResumeUpload() {
                                             className={inputClass}
                                             type="text"
                                             placeholder="John Doe"
-                                            value={formData.fullName}
-                                            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         />
                                     </div>
                                     <div className="space-y-1.5">
@@ -396,7 +296,7 @@ function ResumeUpload() {
                                         <input
                                             className={inputClass}
                                             type="tel"
-                                            placeholder="+1 234 567 8900"
+                                            placeholder="+91 234 567 8900"
                                             value={formData.phone}
                                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                         />
@@ -422,181 +322,140 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Portfolio</label>
+                                        <label className={labelClass}>Desired Role</label>
                                         <input
                                             className={inputClass}
-                                            type="url"
-                                            placeholder="johndoe.com"
-                                            value={formData.portfolio}
-                                            onChange={(e) => setFormData({ ...formData, portfolio: e.target.value })}
+                                            type="text"
+                                            placeholder="Full Stack Developer, etc.."
+                                            value={formData.desiredRole}
+                                            onChange={(e) => setFormData({ ...formData, desiredRole: e.target.value })}
                                         />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className={labelClass}>Experience Level</label>
+                                        <select
+                                            className={inputClass}
+                                            value={formData.experienceLevel}
+                                            onChange={(e) => setFormData({ ...formData, experienceLevel: e.target.value })}
+                                        >
+                                            <option value="Entry-Level">Entry-Level</option>
+                                            <option value="Mid-Level">Mid-Level</option>
+                                            <option value="Senior-Level">Senior-Level</option>
+                                        </select>
                                     </div>
                                 </div>
                             </section>
 
-                            {/* Education */}
+                            {/* Academic & Skill Metrics */}
                             <section className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">🎓 Education</h3>
-                                    <button className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-purple-500" onClick={addEducation}>+ Add Education</button>
-                                </div>
-                                <div className="space-y-4">
-                                    {formData.education.map((edu, index) => (
-                                        <div key={index} className="space-y-4 rounded-xl border border-purple-500/30 bg-gray-800/50 px-4 py-4">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm font-semibold text-purple-400">Education {index + 1}</span>
-                                                {formData.education.length > 1 && (
-                                                    <button className="rounded-md bg-rose-500 px-2 py-1 text-xs font-semibold text-white hover:bg-rose-600" onClick={() => removeItem('education', index)}>🗑️</button>
-                                                )}
-                                            </div>
-                                            <div className="grid gap-4 md:grid-cols-2">
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>School/University</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="text"
-                                                        placeholder="University Name"
-                                                        value={edu.school}
-                                                        onChange={(e) => handleInputChange('education', index, 'school', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>Degree</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="text"
-                                                        placeholder="Bachelor of Technology"
-                                                        value={edu.degree}
-                                                        onChange={(e) => handleInputChange('education', index, 'degree', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>Field of Study</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="text"
-                                                        placeholder="Computer Science"
-                                                        value={edu.fieldOfStudy}
-                                                        onChange={(e) => handleInputChange('education', index, 'fieldOfStudy', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>CGPA/Percentage</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="text"
-                                                        placeholder="8.5"
-                                                        value={edu.cgpa}
-                                                        onChange={(e) => handleInputChange('education', index, 'cgpa', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>Start Date</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="month"
-                                                        value={edu.startDate}
-                                                        onChange={(e) => handleInputChange('education', index, 'startDate', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>End Date</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="month"
-                                                        value={edu.endDate}
-                                                        onChange={(e) => handleInputChange('education', index, 'endDate', e.target.value)}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="space-y-1.5">
-                                                <label className={labelClass}>Description</label>
-                                                <textarea
-                                                    className={textareaClass}
-                                                    placeholder="Achievements, relevant coursework, etc."
-                                                    value={edu.description}
-                                                    onChange={(e) => handleInputChange('education', index, 'description', e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">📊 Academic & Skill Metrics</h3>
+                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                    <div className="space-y-1.5">
+                                        <label className={labelClass}>Current CGPA</label>
+                                        <input
+                                            className={inputClass}
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="e.g. 8.5"
+                                            value={formData.cgpa}
+                                            onChange={(e) => setFormData({ ...formData, cgpa: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className={labelClass}>10th Percentage</label>
+                                        <input
+                                            className={inputClass}
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="e.g. 92.5"
+                                            value={formData.tenthPercent}
+                                            onChange={(e) => setFormData({ ...formData, tenthPercent: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className={labelClass}>12th Percentage</label>
+                                        <input
+                                            className={inputClass}
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="e.g. 89.0"
+                                            value={formData.twelfthPercent}
+                                            onChange={(e) => setFormData({ ...formData, twelfthPercent: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className={labelClass}>Active Backlogs</label>
+                                        <input
+                                            className={inputClass}
+                                            type="number"
+                                            min="0"
+                                            placeholder="Enter 0 if none"
+                                            value={formData.backlogs}
+                                            onChange={(e) => setFormData({ ...formData, backlogs: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className={labelClass}>Communication Skills (1-5)</label>
+                                        <input
+                                            className={inputClass}
+                                            type="number"
+                                            min="1"
+                                            max="5"
+                                            placeholder="Rate out of 5"
+                                            value={formData.communicationRating}
+                                            onChange={(e) => setFormData({ ...formData, communicationRating: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className={labelClass}>Hackathon Participation</label>
+                                        <select
+                                            className={inputClass}
+                                            value={formData.hackathon}
+                                            onChange={(e) => setFormData({ ...formData, hackathon: e.target.value })}
+                                        >
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </section>
 
-                            {/* Experience */}
+                            {/* Internships/Experience */}
                             <section className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">💼 Work Experience</h3>
-                                    <button className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-purple-500" onClick={addExperience}>+ Add Experience</button>
+                                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">💼 Internships / Experience</h3>
+                                    <button className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-purple-500" onClick={addInternship}>+ Add Internship</button>
                                 </div>
                                 <div className="space-y-4">
-                                    {formData.experience.map((exp, index) => (
+                                    {formData.internships.map((internship, index) => (
                                         <div key={index} className="space-y-4 rounded-xl border border-purple-500/30 bg-gray-800/50 px-4 py-4">
                                             <div className="flex items-center justify-between">
-                                                <span className="text-sm font-semibold text-purple-400">Experience {index + 1}</span>
-                                                {formData.experience.length > 1 && (
-                                                    <button className="rounded-md bg-rose-500 px-2 py-1 text-xs font-semibold text-white hover:bg-rose-600" onClick={() => removeItem('experience', index)}>🗑️</button>
+                                                <span className="text-sm font-semibold text-purple-400">Internship {index + 1}</span>
+                                                {formData.internships.length > 1 && (
+                                                    <button className="rounded-md bg-rose-500 px-2 py-1 text-xs font-semibold text-white hover:bg-rose-600" onClick={() => removeItem('internships', index)}>🗑️</button>
                                                 )}
                                             </div>
                                             <div className="grid gap-4 md:grid-cols-2">
                                                 <div className="space-y-1.5">
-                                                    <label className={labelClass}>Company</label>
+                                                    <label className={labelClass}>Company Name</label>
                                                     <input
                                                         className={inputClass}
                                                         type="text"
                                                         placeholder="Company Name"
-                                                        value={exp.company}
-                                                        onChange={(e) => handleInputChange('experience', index, 'company', e.target.value)}
+                                                        value={internship.company}
+                                                        onChange={(e) => handleInputChange('internships', index, 'company', e.target.value)}
                                                     />
                                                 </div>
                                                 <div className="space-y-1.5">
-                                                    <label className={labelClass}>Position</label>
+                                                    <label className={labelClass}>Role</label>
                                                     <input
                                                         className={inputClass}
                                                         type="text"
-                                                        placeholder="Software Engineer"
-                                                        value={exp.position}
-                                                        onChange={(e) => handleInputChange('experience', index, 'position', e.target.value)}
+                                                        placeholder="Software Developer Intern"
+                                                        value={internship.role}
+                                                        onChange={(e) => handleInputChange('internships', index, 'role', e.target.value)}
                                                     />
                                                 </div>
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>Location</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="text"
-                                                        placeholder="New York, NY"
-                                                        value={exp.location}
-                                                        onChange={(e) => handleInputChange('experience', index, 'location', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>Start Date</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="month"
-                                                        value={exp.startDate}
-                                                        onChange={(e) => handleInputChange('experience', index, 'startDate', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>End Date</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="month"
-                                                        value={exp.endDate}
-                                                        onChange={(e) => handleInputChange('experience', index, 'endDate', e.target.value)}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="space-y-1.5">
-                                                <label className={labelClass}>Description</label>
-                                                <textarea
-                                                    className={textareaClass}
-                                                    placeholder="Describe your responsibilities and achievements..."
-                                                    value={exp.description}
-                                                    onChange={(e) => handleInputChange('experience', index, 'description', e.target.value)}
-                                                    rows="4"
-                                                />
                                             </div>
                                         </div>
                                     ))}
@@ -605,63 +464,16 @@ function ResumeUpload() {
 
                             {/* Projects */}
                             <section className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">🚀 Projects</h3>
-                                    <button className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-purple-500" onClick={addProject}>+ Add Project</button>
-                                </div>
-                                <div className="space-y-4">
-                                    {formData.projects.map((project, index) => (
-                                        <div key={index} className="space-y-4 rounded-xl border border-purple-500/30 bg-gray-800/50 px-4 py-4">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm font-semibold text-purple-400">Project {index + 1}</span>
-                                                {formData.projects.length > 1 && (
-                                                    <button className="rounded-md bg-rose-500 px-2 py-1 text-xs font-semibold text-white hover:bg-rose-600" onClick={() => removeItem('projects', index)}>🗑️</button>
-                                                )}
-                                            </div>
-                                            <div className="grid gap-4 md:grid-cols-2">
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>Project Name</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="text"
-                                                        placeholder="Project Name"
-                                                        value={project.name}
-                                                        onChange={(e) => handleInputChange('projects', index, 'name', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <label className={labelClass}>Project Link</label>
-                                                    <input
-                                                        className={inputClass}
-                                                        type="url"
-                                                        placeholder="github.com/project"
-                                                        value={project.link}
-                                                        onChange={(e) => handleInputChange('projects', index, 'link', e.target.value)}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="space-y-1.5">
-                                                <label className={labelClass}>Technologies Used</label>
-                                                <input
-                                                    className={inputClass}
-                                                    type="text"
-                                                    placeholder="React, Node.js, MongoDB..."
-                                                    value={project.technologies}
-                                                    onChange={(e) => handleInputChange('projects', index, 'technologies', e.target.value)}
-                                                />
-                                            </div>
-                                            <div className="space-y-1.5">
-                                                <label className={labelClass}>Description</label>
-                                                <textarea
-                                                    className={textareaClass}
-                                                    placeholder="Describe your project..."
-                                                    value={project.description}
-                                                    onChange={(e) => handleInputChange('projects', index, 'description', e.target.value)}
-                                                    rows="3"
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">🚀 Projects</h3>
+                                <div className="space-y-1.5">
+                                    <label className={labelClass}>Project Names (comma separated)</label>
+                                    <textarea
+                                        className={textareaClass}
+                                        placeholder="E-commerce App, Portfolio Website, Chat Application..."
+                                        value={formData.projects.join(', ')}
+                                        onChange={(e) => setFormData({ ...formData, projects: e.target.value.split(',').map(s => s.trim()).filter(s => s) })}
+                                        rows="2"
+                                    />
                                 </div>
                             </section>
 
@@ -674,7 +486,7 @@ function ResumeUpload() {
                                         className={textareaClass}
                                         placeholder="JavaScript, React, Node.js, Python, SQL..."
                                         value={formData.skills.join(', ')}
-                                        onChange={(e) => setFormData({ ...formData, skills: e.target.value.split(',').map(s => s.trim()) })}
+                                        onChange={(e) => setFormData({ ...formData, skills: e.target.value.split(',').map(s => s.trim()).filter(s => s) })}
                                         rows="3"
                                     />
                                 </div>
@@ -689,8 +501,8 @@ function ResumeUpload() {
                                         className={textareaClass}
                                         placeholder="AWS Certified Developer, Google Cloud Professional..."
                                         value={formData.certifications.join(', ')}
-                                        onChange={(e) => setFormData({ ...formData, certifications: e.target.value.split(',').map(s => s.trim()) })}
-                                        rows="3"
+                                        onChange={(e) => setFormData({ ...formData, certifications: e.target.value.split(',').map(s => s.trim()).filter(s => s) })}
+                                        rows="2"
                                     />
                                 </div>
                             </section>
@@ -700,7 +512,7 @@ function ResumeUpload() {
                                 <button
                                     className="rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl hover:from-purple-500 hover:to-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed"
                                     onClick={handleFinalUpload}
-                                    disabled={isUploading || !selectedFile}
+                                    disabled={isUploading}
                                 >
                                     {isUploading ? 'Submitting...' : 'Submit Profile'}
                                 </button>
