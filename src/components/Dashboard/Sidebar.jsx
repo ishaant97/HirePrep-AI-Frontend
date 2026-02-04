@@ -13,7 +13,7 @@ const menuItems = [
 function Sidebar({ activeSection, onSectionChange, isCollapsed, onToggleCollapse }) {
     return (
         <aside
-            className={`fixed left-0 top-0 h-screen bg-gray-900/95 backdrop-blur-sm border-r border-purple-500/20 transition-all duration-300 z-40 flex flex-col ${isCollapsed ? 'w-20' : 'w-64'
+            className={`fixed left-0 top-0 h-screen bg-gray-900/95 backdrop-blur-sm border-r border-purple-500/20 transition-all duration-300 z-40 flex flex-col overflow-visible ${isCollapsed ? 'w-20' : 'w-72'
                 }`}
         >
             {/* Logo Section */}
@@ -23,8 +23,8 @@ function Sidebar({ activeSection, onSectionChange, isCollapsed, onToggleCollapse
                         <span className="text-white font-bold text-lg">H</span>
                     </div>
                     {!isCollapsed && (
-                        <div className="overflow-hidden">
-                            <h1 className="text-white font-bold text-lg whitespace-nowrap">HirePrep AI</h1>
+                        <div>
+                            <h1 className="text-white font-bold text-lg">HirePrep</h1>
                             <p className="text-gray-400 text-xs">Career Assistant</p>
                         </div>
                     )}
@@ -34,16 +34,29 @@ function Sidebar({ activeSection, onSectionChange, isCollapsed, onToggleCollapse
             {/* Toggle Button */}
             <button
                 onClick={onToggleCollapse}
-                className="absolute -right-3 top-20 w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white hover:bg-purple-500 transition-colors shadow-lg"
+                className="absolute -right-5 top-20 flex items-center justify-center w-10 h-10 bg-gray-900 rounded-xl border border-purple-500/30 text-white hover:border-purple-500 hover:bg-gray-800 transition-all duration-200 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 group"
             >
-                <svg
-                    className={`w-4 h-4 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
+                <div className="flex items-center gap-0.5">
+                    {/* Dotted lines */}
+                    <span className={`flex gap-0.5 transition-opacity duration-200 ${isCollapsed ? 'opacity-0 w-0' : 'opacity-100'}`}>
+                        <span className="w-1 h-1 bg-purple-400 rounded-full"></span>
+                        <span className="w-1 h-1 bg-purple-400 rounded-full"></span>
+                    </span>
+                    {/* Arrow */}
+                    <svg
+                        className={`w-5 h-5 text-purple-400 group-hover:text-purple-300 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    {/* Dotted lines (right side, visible when collapsed) */}
+                    <span className={`flex gap-0.5 transition-opacity duration-200 ${isCollapsed ? 'opacity-100' : 'opacity-0 w-0'}`}>
+                        <span className="w-1 h-1 bg-purple-400 rounded-full"></span>
+                        <span className="w-1 h-1 bg-purple-400 rounded-full"></span>
+                    </span>
+                </div>
             </button>
 
             {/* Navigation Items */}
@@ -61,7 +74,7 @@ function Sidebar({ activeSection, onSectionChange, isCollapsed, onToggleCollapse
                             >
                                 <span className="text-xl flex-shrink-0">{item.icon}</span>
                                 {!isCollapsed && (
-                                    <span className="font-medium whitespace-nowrap overflow-hidden">
+                                    <span className="font-medium">
                                         {item.label}
                                     </span>
                                 )}

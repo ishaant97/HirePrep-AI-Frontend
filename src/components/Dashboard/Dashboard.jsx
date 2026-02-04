@@ -63,7 +63,7 @@ function Dashboard() {
 
             {/* Main Content Area */}
             <main
-                className={`pt-16 min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-64'
+                className={`pt-16 min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-72'
                     }`}
             >
                 <div className="p-6">

@@ -29,7 +29,7 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
 
     return (
         <header
-            className={`fixed top-0 right-0 h-16 bg-gray-900/80 backdrop-blur-md border-b border-purple-500/20 z-30 transition-all duration-300 ${sidebarCollapsed ? 'left-20' : 'left-64'
+            className={`fixed top-0 right-0 h-16 bg-gray-900/80 backdrop-blur-md border-b border-purple-500/20 z-30 transition-all duration-300 ${sidebarCollapsed ? 'left-20' : 'left-72'
                 }`}
         >
             <div className="h-full px-6 flex items-center justify-between">

@@ -89,7 +89,7 @@ function ResumeUpload() {
 
             const res = await api.post("/resume/parseResume", formDataToSend);
             const parsedData = res.data;
-            console.log(parsedData);
+            // console.log(parsedData);
 
             // Map the API response to form data
             setFormData(prev => ({
@@ -108,7 +108,7 @@ function ResumeUpload() {
                 desiredRole: parsedData.desired_role || prev.desiredRole,
                 experienceLevel: parsedData.experience_level || prev.experienceLevel,
                 skills: parsedData.skills || prev.skills,
-                projects: parsedData.project || prev.projects,
+                projects: parsedData.projects || prev.projects,
                 certifications: parsedData.certifications || prev.certifications,
                 internships: parsedData.internships?.length > 0
                     ? parsedData.internships
