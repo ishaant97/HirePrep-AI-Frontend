@@ -11,7 +11,6 @@ function ResumeUpload() {
     const [formData, setFormData] = useState({
         // Personal Information
         name: '',
-        originalFileName: '',
         email: '',
         phone: '',
         linkedin: '',
@@ -96,7 +95,6 @@ function ResumeUpload() {
             setFormData(prev => ({
                 ...prev,
                 name: parsedData.name || prev.name,
-                originalFileName: selectedFile.name || prev.originalFileName,
                 email: parsedData.email || prev.email,
                 phone: parsedData.phone || prev.phone,
                 linkedin: parsedData.linkedin || prev.linkedin,
@@ -181,7 +179,11 @@ function ResumeUpload() {
                 internships: validInternships.length > 0 ? validInternships : undefined
             };
 
-            await api.post("/resume/save", payload);
+            const finalFormData = new FormData();
+            finalFormData.append("resume", selectedFile);
+            finalFormData.append("resumeData", JSON.stringify(payload));
+
+            await api.post("/resume/save", finalFormData);
             navigate('/dashboard');
         } catch (error) {
             console.error('Error uploading resume:', error);
