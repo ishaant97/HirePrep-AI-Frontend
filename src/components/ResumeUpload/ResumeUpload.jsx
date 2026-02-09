@@ -11,6 +11,7 @@ function ResumeUpload() {
     const [formData, setFormData] = useState({
         // Personal Information
         name: '',
+        originalFileName: '',
         email: '',
         phone: '',
         linkedin: '',
@@ -95,6 +96,7 @@ function ResumeUpload() {
             setFormData(prev => ({
                 ...prev,
                 name: parsedData.name || prev.name,
+                originalFileName: selectedFile.name || prev.originalFileName,
                 email: parsedData.email || prev.email,
                 phone: parsedData.phone || prev.phone,
                 linkedin: parsedData.linkedin || prev.linkedin,
@@ -159,6 +161,7 @@ function ResumeUpload() {
 
             const payload = {
                 name: formData.name,
+                originalFileName: formData.originalFileName,
                 email: formData.email,
                 phone: formData.phone,
                 linkedin: formData.linkedin || undefined,
@@ -182,7 +185,7 @@ function ResumeUpload() {
             navigate('/dashboard');
         } catch (error) {
             console.error('Error uploading resume:', error);
-            alert('Failed to upload resume. Please try again.');
+            alert(error.response?.data?.message || "Upload failed");
         } finally {
             setIsUploading(false);
         }
