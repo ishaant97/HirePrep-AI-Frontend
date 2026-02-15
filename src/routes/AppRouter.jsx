@@ -18,9 +18,6 @@ function AppRouter() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/resumeUpload" element={<ResumeUpload />} />
                 <Route path="/profile" element={<Profile />} />
-                {/* <Route path="/jobs" element={<Jobs />} />
-                <Route path="/analysis" element={<Analysis />} />
-                <Route path="/profile" element={<Profile />} /> */}
             </Route>
         </Routes>
     </BrowserRouter>

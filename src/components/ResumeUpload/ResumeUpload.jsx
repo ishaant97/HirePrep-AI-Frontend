@@ -27,6 +27,7 @@ function ResumeUpload() {
         // Career
         desiredRole: '',
         experienceLevel: 'Entry-Level',
+        experienceYears: '',
 
         // Internships
         internships: [{
@@ -107,6 +108,7 @@ function ResumeUpload() {
                 hackathon: parsedData.hackathon || prev.hackathon,
                 desiredRole: parsedData.desired_role || prev.desiredRole,
                 experienceLevel: parsedData.experience_level || prev.experienceLevel,
+                experienceYears: parsedData.experienceYears?.toString() || prev.experienceYears,
                 skills: parsedData.skills || prev.skills,
                 projects: parsedData.projects || prev.projects,
                 certifications: parsedData.certifications || prev.certifications,
@@ -171,8 +173,9 @@ function ResumeUpload() {
                 communication_rating: formData.communicationRating ? parseInt(formData.communicationRating) : undefined,
                 hackathon: formData.hackathon,
                 desired_role: formData.desiredRole || undefined,
-                experience: validInternships.length, // Calculate from internships count
+                // experience: validInternships.length, // Calculate from internships count
                 experience_level: formData.experienceLevel,
+                experience_years: formData.experienceYears ? parseFloat(formData.experienceYears) : undefined,
                 skills: formData.skills.length > 0 ? formData.skills : undefined,
                 project: formData.projects.length > 0 ? formData.projects : undefined,
                 certifications: formData.certifications.length > 0 ? formData.certifications : undefined,
@@ -348,6 +351,18 @@ function ResumeUpload() {
                                             <option value="Senior-Level">Senior-Level</option>
                                         </select>
                                     </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className={labelClass}>Experience in years</label>
+                                        <input
+                                            className={inputClass}
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="e.g. 2.5"
+                                            value={formData.experienceYears}
+                                            onChange={(e) => setFormData({ ...formData, experienceYears: e.target.value })}
+                                        />
+                                    </div>
                                 </div>
                             </section>
 
@@ -356,7 +371,7 @@ function ResumeUpload() {
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">📊 Academic & Skill Metrics</h3>
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Current CGPA</label>
+                                        <label className={labelClass}>Current CGPA (on a scale of 10)</label>
                                         <input
                                             className={inputClass}
                                             type="number"
@@ -367,7 +382,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>10th Percentage</label>
+                                        <label className={labelClass}>10th Percentage (on a scale of 100)</label>
                                         <input
                                             className={inputClass}
                                             type="number"
@@ -378,7 +393,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>12th Percentage</label>
+                                        <label className={labelClass}>12th Percentage (on a scale of 100)</label>
                                         <input
                                             className={inputClass}
                                             type="number"
