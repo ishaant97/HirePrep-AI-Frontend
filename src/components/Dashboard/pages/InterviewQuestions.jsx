@@ -1,4 +1,21 @@
+import { useEffect } from 'react';
+import { useResume } from '../../../context/ResumeContext';
+
 function InterviewQuestions() {
+    const { activeResumeId } = useResume();
+
+    // Placeholder for fetchAnalysis - implement when backend is ready
+    const fetchAnalysis = (resumeId) => {
+        // TODO: Implement API call to fetch interview questions
+        console.log('Fetching interview questions for resume:', resumeId);
+    };
+
+    useEffect(() => {
+        if (activeResumeId) {
+            fetchAnalysis(activeResumeId);
+        }
+    }, [activeResumeId]);
+
     return (
         <div className="space-y-6">
             {/* Header */}

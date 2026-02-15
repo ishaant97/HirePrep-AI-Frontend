@@ -1,18 +1,48 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useResume } from '../../context/ResumeContext';
 import { useNavigate } from "react-router";
+import api from '../../api/axios';
 
 function Navbar({ onOpenChat, sidebarCollapsed }) {
     const { user, logout } = useAuth();
+    const { activeResumeId, setActiveResumeId, resumeList, setResumeList } = useResume();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isResumeDropdownOpen, setIsResumeDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const resumeDropdownRef = useRef(null);
     const navigate = useNavigate();
+
+    // Get user ID (handle both _id and id formats)
+    const userId = user?._id || user?.id;
+
+    // Fetch resumes on mount
+    useEffect(() => {
+        const fetchResumes = async () => {
+            if (userId) {
+                try {
+                    const res = await api.get(`/resume/user/${userId}`);
+                    setResumeList(res.data);
+                    // Auto-select first resume if none selected
+                    if (!activeResumeId && res.data.length > 0) {
+                        setActiveResumeId(res.data[0]._id);
+                    }
+                } catch (err) {
+                    console.error('Failed to fetch resumes:', err);
+                }
+            }
+        };
+        fetchResumes();
+    }, [userId, setResumeList, setActiveResumeId, activeResumeId]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsProfileOpen(false);
+            }
+            if (resumeDropdownRef.current && !resumeDropdownRef.current.contains(event.target)) {
+                setIsResumeDropdownOpen(false);
             }
         }
         document.addEventListener('mousedown', handleClickOutside);
@@ -40,6 +70,145 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
 
                 {/* Right Section - Actions */}
                 <div className="flex items-center gap-4">
+                    {/* Resume Dropdown */}
+                    <div className="relative" ref={resumeDropdownRef}>
+                        <button
+                            onClick={() => setIsResumeDropdownOpen(!isResumeDropdownOpen)}
+                            className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-white rounded-xl hover:bg-gray-700/50 hover:border-purple-500/30 transition-all duration-200"
+                        >
+                            <svg
+                                className="w-5 h-5 text-purple-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                            </svg>
+                            <span className="font-medium text-sm max-w-[150px] truncate">
+                                {resumeList.find(r => r._id === activeResumeId)?.originalFileName || 'Select Resume'}
+                            </span>
+                            <svg
+                                className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isResumeDropdownOpen ? 'rotate-180' : ''}`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        {/* Resume Dropdown Menu */}
+                        {isResumeDropdownOpen && (
+                            <div className="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
+                                {/* Header */}
+                                <div className="px-5 py-4 bg-gradient-to-r from-purple-600/10 to-indigo-600/10 border-b border-purple-500/20">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
+                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p className="text-white font-semibold">Your Resumes</p>
+                                            <p className="text-purple-300/70 text-xs">{resumeList.length} resume{resumeList.length !== 1 ? 's' : ''} uploaded</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Resume List */}
+                                <div className="max-h-72 overflow-y-auto p-2">
+                                    {resumeList.length === 0 ? (
+                                        <div className="px-4 py-8 text-center">
+                                            <div className="w-16 h-16 bg-gray-800/50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                                <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </div>
+                                            <p className="text-gray-400 text-sm">No resumes uploaded yet</p>
+                                            <p className="text-gray-500 text-xs mt-1">Upload your first resume to get started</p>
+                                        </div>
+                                    ) : (
+                                        resumeList.map((resume) => (
+                                            <div
+                                                key={resume._id}
+                                                className={`group flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 cursor-pointer mb-1 ${activeResumeId === resume._id
+                                                    ? 'bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border border-purple-500/30'
+                                                    : 'hover:bg-gray-800/50 border border-transparent'
+                                                    }`}
+                                                onClick={() => {
+                                                    setActiveResumeId(resume._id);
+                                                    setIsResumeDropdownOpen(false);
+                                                }}
+                                            >
+                                                {/* Resume Icon */}
+                                                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${activeResumeId === resume._id
+                                                    ? 'bg-purple-500/20 text-purple-400'
+                                                    : 'bg-gray-800/80 text-gray-400 group-hover:bg-gray-700/80 group-hover:text-gray-300'
+                                                    }`}>
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                    </svg>
+                                                </div>
+
+                                                {/* Resume Info */}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className={`text-sm truncate font-medium ${activeResumeId === resume._id ? 'text-purple-300' : 'text-gray-300'
+                                                        }`}>
+                                                        {resume.originalFileName}
+                                                    </p>
+                                                    {activeResumeId === resume._id && (
+                                                        <p className="text-xs text-purple-400/70 mt-0.5">Currently selected</p>
+                                                    )}
+                                                </div>
+
+                                                {/* View Button */}
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        window.open(`http://localhost:3000/api/resume/view/${resume._id}`, '_blank');
+                                                    }}
+                                                    className="p-2 rounded-lg bg-gray-800/50 hover:bg-purple-500/20 text-gray-400 hover:text-purple-400 transition-all duration-200 opacity-0 group-hover:opacity-100 flex-shrink-0"
+                                                    title="View Resume"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </button>
+
+                                                {/* Selected Indicator */}
+                                                {activeResumeId === resume._id && (
+                                                    <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0 animate-pulse"></div>
+                                                )}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                {/* Footer */}
+                                <div className="p-2 border-t border-purple-500/10">
+                                    <button
+                                        onClick={() => {
+                                            navigate('/resumeUpload');
+                                            setIsResumeDropdownOpen(false);
+                                        }}
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600/10 to-indigo-600/10 hover:from-purple-600/20 hover:to-indigo-600/20 text-purple-400 hover:text-purple-300 transition-all duration-200 border border-purple-500/20 hover:border-purple-500/30"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        <span className="text-sm font-medium">Upload New Resume</span>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     {/* AI Chat Button */}
                     <button
                         onClick={onOpenChat}
@@ -101,49 +270,102 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
 
                         {/* Dropdown Menu */}
                         {isProfileOpen && (
-                            <div className="absolute right-0 mt-3 w-72 origin-top-right rounded-2xl border border-slate-700/60 bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/60 ring-1 ring-white/5 overflow-hidden animate-fadeIn">
-                                <div className="px-5 py-4 bg-slate-800/60">
-                                    <p className="text-white font-semibold">{user?.name || 'User'}</p>
-                                    <p className="text-slate-400 text-sm truncate">{user?.email || 'user@email.com'}</p>
+                            <div className="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
+                                {/* Header */}
+                                <div className="px-5 py-4 bg-gradient-to-r from-purple-600/10 to-indigo-600/10 border-b border-purple-500/20">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-purple-500/30">
+                                            {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-white font-semibold truncate">{user?.name || 'User'}</p>
+                                            <p className="text-purple-300/70 text-sm truncate">{user?.email || 'user@email.com'}</p>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="p-2 space-y-1">
+                                {/* Menu Items */}
+                                <div className="p-2">
                                     <button
-                                        onClick={() => navigate('/profile')}
-                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors"
+                                        onClick={() => {
+                                            navigate('/profile');
+                                            setIsProfileOpen(false);
+                                        }}
+                                        className="group w-full flex items-center gap-3 px-3 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
                                     >
-                                        <span className="w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <span className="w-9 h-9 rounded-lg bg-gray-800/80 group-hover:bg-purple-500/20 flex items-center justify-center transition-colors">
+                                            <svg className="w-5 h-5 text-gray-400 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                             </svg>
                                         </span>
-                                        <span className="font-medium">Profile</span>
+                                        <div className="flex-1 text-left">
+                                            <span className="font-medium">Profile</span>
+                                            <p className="text-xs text-gray-500 group-hover:text-gray-400">View and edit your profile</p>
+                                        </div>
+                                        <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
                                     </button>
 
                                     <button
-                                        onClick={() => navigate('/resumeUpload')}
-                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors"
+                                        onClick={() => {
+                                            navigate('/resumeUpload');
+                                            setIsProfileOpen(false);
+                                        }}
+                                        className="group w-full flex items-center gap-3 px-3 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
                                     >
-                                        <span className="w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <span className="w-9 h-9 rounded-lg bg-gray-800/80 group-hover:bg-purple-500/20 flex items-center justify-center transition-colors">
+                                            <svg className="w-5 h-5 text-gray-400 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
                                         </span>
-                                        <span className="font-medium">Upload Resume</span>
+                                        <div className="flex-1 text-left">
+                                            <span className="font-medium">Upload Resume</span>
+                                            <p className="text-xs text-gray-500 group-hover:text-gray-400">Add a new resume</p>
+                                        </div>
+                                        <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
                                     </button>
+
+                                    {/* <button
+                                        onClick={() => {
+                                            navigate('/dashboard/settings');
+                                            setIsProfileOpen(false);
+                                        }}
+                                        className="group w-full flex items-center gap-3 px-3 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
+                                    >
+                                        <span className="w-9 h-9 rounded-lg bg-gray-800/80 group-hover:bg-purple-500/20 flex items-center justify-center transition-colors">
+                                            <svg className="w-5 h-5 text-gray-400 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                        </span>
+                                        <div className="flex-1 text-left">
+                                            <span className="font-medium">Settings</span>
+                                            <p className="text-xs text-gray-500 group-hover:text-gray-400">Preferences and account</p>
+                                        </div>
+                                        <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </button> */}
                                 </div>
 
-                                <div className="border-t border-slate-800/80 p-2">
+                                {/* Logout */}
+                                <div className="p-2 border-t border-purple-500/10">
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                                        className="group w-full flex items-center gap-3 px-3 py-3 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200"
                                     >
-                                        <span className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
+                                        <span className="w-9 h-9 rounded-lg bg-red-500/10 group-hover:bg-red-500/20 flex items-center justify-center transition-colors">
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                             </svg>
                                         </span>
-                                        <span className="font-medium">Logout</span>
+                                        <div className="flex-1 text-left">
+                                            <span className="font-medium">Logout</span>
+                                            <p className="text-xs text-red-400/60 group-hover:text-red-400/80">Sign out of your account</p>
+                                        </div>
                                     </button>
                                 </div>
                             </div>
