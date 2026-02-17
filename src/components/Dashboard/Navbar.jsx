@@ -170,7 +170,9 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        window.open(`http://localhost:3000/api/resume/view/${resume._id}`, '_blank');
+                                                        window.open(`http://localhost:3000/api/resume/view/${resume._id}`, '_blank'); // development URL
+                                                        // window.open(`https://hireprep-ai-backend.onrender.com/api/resume/view/${resume._id}`, '_blank'); // production URL
+
                                                     }}
                                                     className="p-2 rounded-lg bg-gray-800/50 hover:bg-purple-500/20 text-gray-400 hover:text-purple-400 transition-all duration-200 opacity-0 group-hover:opacity-100 flex-shrink-0"
                                                     title="View Resume"
