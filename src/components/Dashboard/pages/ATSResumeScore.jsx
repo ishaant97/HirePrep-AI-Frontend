@@ -74,6 +74,48 @@ function BreakdownBar({ name, value }) {
     );
 }
 
+/* ── match-level helpers ── */
+const matchLevelStyle = (level) => {
+    const l = (level || '').toLowerCase();
+    if (l === 'strong') return { color: 'text-emerald-400', bg: 'bg-emerald-500/15', border: 'border-emerald-500/30', icon: '🟢', desc: 'Your resume closely aligns with this role\'s expectations.' };
+    if (l === 'moderate') return { color: 'text-yellow-400', bg: 'bg-yellow-500/15', border: 'border-yellow-500/30', icon: '🟡', desc: 'Your resume partially matches — a few improvements could help.' };
+    return { color: 'text-red-400', bg: 'bg-red-500/15', border: 'border-red-500/30', icon: '🔴', desc: 'Your resume needs significant changes for this role.' };
+};
+
+/* ── role analysis banner ── */
+function RoleAnalysisBanner({ roleAnalysis }) {
+    if (!roleAnalysis) return null;
+    const { desired_role, role_match_level } = roleAnalysis;
+    const ml = matchLevelStyle(role_match_level);
+
+    return (
+        <div className={`relative ${ml.bg} ${ml.border} border rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 overflow-hidden`}>
+            {/* decorative gradient blur */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="flex items-center gap-3 z-10">
+                <div className="w-11 h-11 rounded-xl bg-gray-800/60 flex items-center justify-center text-2xl">🎯</div>
+                <div>
+                    <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">Target Role</p>
+                    <p className="text-lg font-semibold text-white leading-tight">{desired_role}</p>
+                </div>
+            </div>
+
+            <div className="hidden sm:block w-px h-10 bg-gray-600/40" />
+
+            <div className="flex items-center gap-3 z-10">
+                <span className="text-xl">{ml.icon}</span>
+                <div>
+                    <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">Match Level</p>
+                    <p className={`text-base font-semibold ${ml.color} leading-tight`}>{role_match_level}</p>
+                </div>
+            </div>
+
+            <p className="text-sm text-gray-400 sm:ml-auto max-w-xs z-10">{ml.desc}</p>
+        </div>
+    );
+}
+
 /* ── list card (strengths / weaknesses / suggestions) ── */
 function ListCard({ title, items, icon, accentFrom, accentTo, dotColor }) {
     return (
@@ -157,7 +199,10 @@ function ATSResumeScore() {
                 <p className="text-gray-400 mt-1">Detailed ATS compatibility analysis of your resume</p>
             </div>
 
-            {/* ── Top Row: Score Ring + Role Analysis ── */}
+            {/* ── Role Analysis Banner ── */}
+            <RoleAnalysisBanner roleAnalysis={role_analysis} />
+
+            {/* ── Top Row: Score Ring + Breakdown ── */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Score Card */}
                 <div className="lg:col-span-1 bg-gray-800/40 border border-gray-700/40 rounded-2xl p-6 flex flex-col items-center justify-center">
@@ -172,15 +217,6 @@ function ATSResumeScore() {
                         <h3 className="text-white font-semibold flex items-center gap-2">
                             <span className="text-lg">📊</span> Score Breakdown
                         </h3>
-                        {role_analysis && (
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-xl">
-                                <span className="text-xs text-gray-400">Role:</span>
-                                <span className="text-sm font-medium text-purple-300">{role_analysis.desired_role}</span>
-                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-medium">
-                                    {role_analysis.role_match_level}
-                                </span>
-                            </div>
-                        )}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                         {breakdown && Object.entries(breakdown).map(([key, value]) => (
