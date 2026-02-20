@@ -26,7 +26,7 @@ function ResumeUpload() {
 
         // Career
         desiredRole: '',
-        experienceLevel: 'Entry-Level',
+        // experienceLevel: 'Entry-Level',
         experienceYears: '',
 
         // Internships
@@ -107,7 +107,7 @@ function ResumeUpload() {
                 communicationRating: parsedData.communication_rating?.toString() || prev.communicationRating,
                 hackathon: parsedData.hackathon || prev.hackathon,
                 desiredRole: parsedData.desired_role || prev.desiredRole,
-                experienceLevel: parsedData.experience_level || prev.experienceLevel,
+                // experienceLevel: parsedData.experience_level || prev.experienceLevel,
                 experienceYears: parsedData.experienceYears?.toString() || prev.experienceYears,
                 skills: parsedData.skills || prev.skills,
                 projects: parsedData.projects || prev.projects,
@@ -174,7 +174,7 @@ function ResumeUpload() {
                 hackathon: formData.hackathon,
                 desired_role: formData.desiredRole || undefined,
                 // experience: validInternships.length, // Calculate from internships count
-                experience_level: formData.experienceLevel,
+                // experience_level: formData.experienceLevel,
                 experience_years: formData.experienceYears ? parseFloat(formData.experienceYears) : undefined,
                 skills: formData.skills.length > 0 ? formData.skills : undefined,
                 project: formData.projects.length > 0 ? formData.projects : undefined,
@@ -339,7 +339,7 @@ function ResumeUpload() {
                                             onChange={(e) => setFormData({ ...formData, desiredRole: e.target.value })}
                                         />
                                     </div>
-                                    <div className="space-y-1.5">
+                                    {/* <div className="space-y-1.5">
                                         <label className={labelClass}>Experience Level</label>
                                         <select
                                             className={inputClass}
@@ -350,7 +350,7 @@ function ResumeUpload() {
                                             <option value="Mid-Level">Mid-Level</option>
                                             <option value="Senior-Level">Senior-Level</option>
                                         </select>
-                                    </div>
+                                    </div> */}
 
                                     <div className="space-y-1.5">
                                         <label className={labelClass}>Experience in years</label>
