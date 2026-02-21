@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
 import api from '../../api/axios';
 import { useNavigate } from "react-router";
+import { useResume } from '../../context/ResumeContext';
 
 function ResumeUpload() {
     const navigate = useNavigate();
+    const { setActiveResumeId } = useResume();
     const [selectedFile, setSelectedFile] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isParsing, setIsParsing] = useState(false);
@@ -186,7 +188,15 @@ function ResumeUpload() {
             finalFormData.append("resume", selectedFile);
             finalFormData.append("resumeData", JSON.stringify(payload));
 
-            await api.post("/resume/save", finalFormData);
+            const res = await api.post("/resume/save", finalFormData);
+            const { resumeId } = res.data;
+
+            // Set the newly saved resume as active so polling starts immediately
+            if (resumeId) {
+                setActiveResumeId(resumeId);
+            }
+
+            alert("Resume saved! Generating analytics...");
             navigate('/dashboard');
         } catch (error) {
             console.error('Error uploading resume:', error);

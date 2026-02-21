@@ -139,16 +139,58 @@ function ListCard({ title, items, icon, accentFrom, accentTo, dotColor }) {
 
 /* ── main component ── */
 function ATSResumeScore() {
-    const { analytics, analyticsLoading, analyticsError, activeResumeId } = useResume();
+    const { analytics, analyticsStatus, analyticsLoading, analyticsError, activeResumeId } = useResume();
 
     const ats = analytics?.ats_evaluation;
 
-    /* ── loading ── */
-    if (analyticsLoading) {
+    /* ── loading or analytics still generating ── */
+    if (analyticsLoading || analyticsStatus === 'pending' || analyticsStatus === 'processing') {
         return (
-            <div className="flex flex-col items-center justify-center py-32 space-y-4">
-                <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
-                <p className="text-gray-400">Analyzing your resume…</p>
+            <div className="space-y-6 pb-8">
+                <div>
+                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                        <span className="text-3xl">📄</span>
+                        ATS Resume Score
+                    </h1>
+                    <p className="text-gray-400 mt-1">Detailed ATS compatibility analysis of your resume</p>
+                </div>
+
+                {/* Skeleton UI */}
+                <div className="flex flex-col items-center justify-center py-16 space-y-6">
+                    <div className="relative w-24 h-24">
+                        <div className="w-24 h-24 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-2xl">📊</span>
+                        </div>
+                    </div>
+                    <div className="text-center space-y-2">
+                        <h2 className="text-lg font-semibold text-white">Analyzing your resume…</h2>
+                        <p className="text-gray-400 text-sm max-w-md">
+                            Our AI is evaluating your resume for ATS compatibility, scoring sections, and generating insights. This usually takes 1–2 minutes.
+                        </p>
+                    </div>
+
+                    {/* Skeleton score cards */}
+                    <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                        <div className="lg:col-span-1 bg-gray-800/40 border border-gray-700/40 rounded-2xl p-6 flex flex-col items-center justify-center">
+                            <div className="w-36 h-36 rounded-full bg-gray-700/40 animate-pulse" />
+                            <div className="mt-4 w-20 h-4 rounded bg-gray-700/40 animate-pulse" />
+                        </div>
+                        <div className="lg:col-span-2 bg-gray-800/40 border border-gray-700/40 rounded-2xl p-6 space-y-4">
+                            {[...Array(5)].map((_, i) => (
+                                <div key={i} className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <div className="w-28 h-3 rounded bg-gray-700/40 animate-pulse" />
+                                        <div className="w-10 h-3 rounded bg-gray-700/40 animate-pulse" />
+                                    </div>
+                                    <div className="h-2.5 bg-gray-700/30 rounded-full overflow-hidden">
+                                        <div className="h-full bg-gray-600/40 rounded-full animate-pulse" style={{ width: `${30 + i * 12}%` }} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -164,13 +206,15 @@ function ATSResumeScore() {
         );
     }
 
-    /* ── error ── */
-    if (analyticsError) {
+    /* ── error or failed analytics ── */
+    if (analyticsError || analyticsStatus === 'failed') {
         return (
             <div className="flex flex-col items-center justify-center py-32 space-y-4">
                 <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center text-4xl">⚠️</div>
-                <h2 className="text-xl font-semibold text-white">Failed to Load Analytics</h2>
-                <p className="text-gray-400 text-sm max-w-sm text-center">{analyticsError}</p>
+                <h2 className="text-xl font-semibold text-white">Analytics Generation Failed</h2>
+                <p className="text-gray-400 text-sm max-w-sm text-center">
+                    {analyticsError || "Analytics generation failed. Please try uploading your resume again."}
+                </p>
             </div>
         );
     }
