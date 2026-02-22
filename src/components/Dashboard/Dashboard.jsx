@@ -36,8 +36,8 @@ function Dashboard() {
                 return <ATSResumeScore />;
             case 'analytics':
                 return <Analytics />;
-            case 'interview':
-                return <InterviewQuestions />;
+            // case 'interview':
+            //     return <InterviewQuestions />;
             // case 'settings':
             //     return <Settings />;
             default:

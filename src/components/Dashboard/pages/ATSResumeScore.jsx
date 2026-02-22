@@ -198,10 +198,19 @@ function ATSResumeScore() {
     /* ── no resume selected ── */
     if (!activeResumeId) {
         return (
-            <div className="flex flex-col items-center justify-center py-32 space-y-4">
-                <div className="w-20 h-20 bg-gray-800/60 rounded-2xl flex items-center justify-center text-4xl">📄</div>
-                <h2 className="text-xl font-semibold text-white">No Resume Selected</h2>
-                <p className="text-gray-400 text-sm max-w-sm text-center">Select a resume from the navbar to view its ATS evaluation.</p>
+            <div className="space-y-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                        <span className="text-3xl">📄</span>
+                        ATS Resume Score
+                    </h1>
+                    <p className="text-gray-400 mt-1">Detailed ATS compatibility analysis of your resume</p>
+                </div>
+                <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                    <div className="w-20 h-20 bg-gray-800/60 rounded-2xl flex items-center justify-center text-4xl">📄</div>
+                    <h2 className="text-xl font-semibold text-white">No Resume Selected</h2>
+                    <p className="text-gray-400 text-sm max-w-sm text-center">Select a resume from the navbar to view your ATS score.</p>
+                </div>
             </div>
         );
     }

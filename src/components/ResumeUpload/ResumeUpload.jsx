@@ -94,30 +94,29 @@ function ResumeUpload() {
             const parsedData = res.data;
             // console.log(parsedData);
 
-            // Map the API response to form data
-            setFormData(prev => ({
-                ...prev,
-                name: parsedData.name || prev.name,
-                email: parsedData.email || prev.email,
-                phone: parsedData.phone || prev.phone,
-                linkedin: parsedData.linkedin || prev.linkedin,
-                github: parsedData.github || prev.github,
-                cgpa: parsedData.cgpa?.toString() || prev.cgpa,
-                tenthPercent: parsedData.tenth_percent?.toString() || prev.tenthPercent,
-                twelfthPercent: parsedData.twelfth_percent?.toString() || prev.twelfthPercent,
-                backlogs: parsedData.backlogs?.toString() || prev.backlogs,
-                communicationRating: parsedData.communication_rating?.toString() || prev.communicationRating,
-                hackathon: parsedData.hackathon || prev.hackathon,
-                desiredRole: parsedData.desired_role || prev.desiredRole,
-                // experienceLevel: parsedData.experience_level || prev.experienceLevel,
-                experienceYears: parsedData.experienceYears?.toString() || prev.experienceYears,
-                skills: parsedData.skills || prev.skills,
-                projects: parsedData.projects || prev.projects,
-                certifications: parsedData.certifications || prev.certifications,
+            // Reset to defaults, then overlay only what the parser returned
+            setFormData({
+                name: parsedData.name || '',
+                email: parsedData.email || '',
+                phone: parsedData.phone || '',
+                linkedin: parsedData.linkedin || '',
+                github: parsedData.github || '',
+                cgpa: parsedData.cgpa?.toString() || '',
+                tenthPercent: parsedData.tenth_percent?.toString() || '',
+                twelfthPercent: parsedData.twelfth_percent?.toString() || '',
+                backlogs: parsedData.backlogs?.toString() || '0',
+                communicationRating: parsedData.communication_rating?.toString() || '',
+                hackathon: parsedData.hackathon || 'No',
+                desiredRole: parsedData.desired_role || '',
+                // experienceLevel: parsedData.experience_level || 'Entry-Level',
+                experienceYears: parsedData.experienceYears?.toString() || '',
+                skills: parsedData.skills || [],
+                projects: parsedData.projects || [],
+                certifications: parsedData.certifications || [],
                 internships: parsedData.internships?.length > 0
                     ? parsedData.internships
-                    : prev.internships
-            }));
+                    : [{ company: '', role: '' }]
+            });
 
             setIsParsing(false);
         } catch (error) {
@@ -152,7 +151,27 @@ function ResumeUpload() {
         setFormData({ ...formData, [section]: updatedArray });
     };
 
+    const requiredFields = [
+        { key: 'name', label: 'Full Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'phone', label: 'Phone' },
+        { key: 'desiredRole', label: 'Desired Role' },
+        { key: 'experienceYears', label: 'Experience in Years' },
+        { key: 'cgpa', label: 'Current CGPA' },
+        { key: 'tenthPercent', label: '10th Percentage' },
+        { key: 'twelfthPercent', label: '12th Percentage' },
+        { key: 'backlogs', label: 'Active Backlogs' },
+        { key: 'communicationRating', label: 'Communication Skills' },
+        { key: 'hackathon', label: 'Hackathon Participation' },
+    ];
+
     const handleFinalUpload = async () => {
+        const missing = requiredFields.filter(f => !formData[f.key]?.toString().trim());
+        if (missing.length > 0) {
+            alert(`Please fill in the following required fields:\n${missing.map(f => `• ${f.label}`).join('\n')}`);
+            return;
+        }
+
         setIsUploading(true);
 
         try {
@@ -290,7 +309,7 @@ function ResumeUpload() {
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">📋 Personal Information</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Full Name</label>
+                                        <label className={labelClass}>Full Name <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="text"
@@ -300,7 +319,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Email</label>
+                                        <label className={labelClass}>Email <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="email"
@@ -310,7 +329,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Phone</label>
+                                        <label className={labelClass}>Phone <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="tel"
@@ -340,7 +359,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Desired Role</label>
+                                        <label className={labelClass}>Desired Role <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="text"
@@ -363,7 +382,7 @@ function ResumeUpload() {
                                     </div> */}
 
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Experience in years</label>
+                                        <label className={labelClass}>Experience in years <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="number"
@@ -381,7 +400,7 @@ function ResumeUpload() {
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">📊 Academic & Skill Metrics</h3>
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Current CGPA (on a scale of 10)</label>
+                                        <label className={labelClass}>Current CGPA (on a scale of 10) <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="number"
@@ -392,7 +411,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>10th Percentage (on a scale of 100)</label>
+                                        <label className={labelClass}>10th Percentage (on a scale of 100) <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="number"
@@ -403,7 +422,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>12th Percentage (on a scale of 100)</label>
+                                        <label className={labelClass}>12th Percentage (on a scale of 100) <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="number"
@@ -414,7 +433,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Active Backlogs</label>
+                                        <label className={labelClass}>Active Backlogs <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="number"
@@ -425,7 +444,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Communication Skills (1-5)</label>
+                                        <label className={labelClass}>Communication Skills (1-5) <span className="text-red-400">*</span></label>
                                         <input
                                             className={inputClass}
                                             type="number"
@@ -437,7 +456,7 @@ function ResumeUpload() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className={labelClass}>Hackathon Participation</label>
+                                        <label className={labelClass}>Hackathon Participation <span className="text-red-400">*</span></label>
                                         <select
                                             className={inputClass}
                                             value={formData.hackathon}

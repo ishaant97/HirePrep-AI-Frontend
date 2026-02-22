@@ -6,7 +6,7 @@ const menuItems = [
     { id: 'roadmap', label: 'Career Roadmap', icon: '🗺️' },
     { id: 'ats', label: 'ATS Resume Score', icon: '📄' },
     { id: 'analytics', label: 'Analytics & Graphs', icon: '📈' },
-    { id: 'interview', label: 'Interview Questions', icon: '🎤' }
+    // { id: 'interview', label: 'Interview Questions', icon: '🎤' }
     // { id: 'settings', label: 'Settings', icon: '⚙️' },
 ];
 
@@ -66,7 +66,7 @@ function Sidebar({ activeSection, onSectionChange, isCollapsed, onToggleCollapse
                         <li key={item.id}>
                             <button
                                 onClick={() => onSectionChange(item.id)}
-                                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group ${activeSection === item.id
+                                className={`w-full flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-3'} py-3 rounded-xl transition-all duration-200 group ${activeSection === item.id
                                     ? 'bg-gradient-to-r from-purple-600/30 to-indigo-600/30 text-white border border-purple-500/30 shadow-lg shadow-purple-500/10'
                                     : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                                     }`}
