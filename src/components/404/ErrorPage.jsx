@@ -10,7 +10,7 @@ function ErrorPage() {
             <div className="w-full lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-purple-900/50 via-gray-900 to-gray-900 p-8">
                 <div className="w-full max-w-20xl">
                     <DotLottieReact
-                        src="/src/assets/animations/PageNotFound404.lottie"
+                        src="/animations/PageNotFound404.lottie"
                         autoplay
                         loop
                     />

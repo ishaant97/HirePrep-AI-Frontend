@@ -30,7 +30,7 @@ function Auth() {
                             <div className="mb-8 transform transition-transform duration-700 hover:scale-105">
                                 <div className="w-full h-56 lg:h-64 xl:h-72 flex items-center justify-center">
                                     <DotLottieReact
-                                        src="/src/assets/animations/Login.lottie"
+                                        src="/animations/Login.lottie"
                                         autoplay
                                         loop
                                         className="drop-shadow-2xl" />
