@@ -53,13 +53,13 @@ function Overview() {
     return (
         <div className="space-y-6">
             {/* Welcome Section */}
-            <div className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border border-purple-500/30 rounded-2xl p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border border-purple-500/30 rounded-2xl p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-white">
+                        <h1 className="text-xl sm:text-2xl font-bold text-white">
                             Welcome back, {user?.name?.split(' ')[0] || 'User'}!
                         </h1>
-                        <p className="text-gray-400 mt-1">
+                        <p className="text-sm text-gray-400 mt-1">
                             Here's your career readiness overview for today.
                         </p>
                     </div>
@@ -73,16 +73,16 @@ function Overview() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {statsCards.map((card, index) => (
                     <div
                         key={index}
-                        className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5 hover:border-purple-500/30 transition-all hover:shadow-lg hover:shadow-purple-500/5 cursor-pointer group"
+                        className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4 sm:p-5 hover:border-purple-500/30 transition-all hover:shadow-lg hover:shadow-purple-500/5 cursor-pointer group"
                     >
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-gray-400 text-sm">{card.title}</p>
-                                <p className="text-3xl font-bold text-white mt-2">{card.value}</p>
+                                <p className="text-gray-400 text-xs sm:text-sm">{card.title}</p>
+                                <p className="text-2xl sm:text-3xl font-bold text-white mt-1 sm:mt-2">{card.value}</p>
                                 {/* <div className={`flex items-center gap-1 mt-2 text-xs ${card.trendUp ? 'text-green-400' : 'text-yellow-400'}`}>
                                     {card.trendUp ? (
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +96,7 @@ function Overview() {
                                     <span>{card.trend}</span>
                                 </div> */}
                             </div>
-                            <div className={`w-12 h-12 bg-gradient-to-br ${card.color} rounded-xl flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform`}>
+                            <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${card.color} rounded-xl flex items-center justify-center text-xl sm:text-2xl shadow-lg group-hover:scale-110 transition-transform`}>
                                 {card.icon}
                             </div>
                         </div>
@@ -105,17 +105,17 @@ function Overview() {
             </div>
 
             {/* Bottom Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                 {/* Top Job Roles */}
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5">
-                    <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4 sm:p-5">
+                    <h3 className="text-white font-semibold mb-3 sm:mb-4 flex items-center gap-2">
                         <span className="text-xl">💼</span>
                         Top Job Matches
                     </h3>
                     <div className="space-y-3">
                         {topJobRoles.map((job, index) => (
-                            <div key={index} className="flex items-center justify-between">
-                                <span className="text-gray-300">{job.role}</span>
+                            <div key={index} className="flex items-center justify-between gap-2">
+                                <span className="text-gray-300 text-sm truncate">{job.role}</span>
                                 <div className="flex items-center gap-2">
                                     <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
                                         <div
@@ -137,8 +137,8 @@ function Overview() {
                 </div>
 
                 {/* Skill Progress */}
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5">
-                    <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4 sm:p-5">
+                    <h3 className="text-white font-semibold mb-3 sm:mb-4 flex items-center gap-2">
                         <span className="text-xl">🧠</span>
                         Skill Overview
                     </h3>

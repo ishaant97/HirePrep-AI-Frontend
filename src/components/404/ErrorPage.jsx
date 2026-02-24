@@ -5,10 +5,10 @@ function ErrorPage() {
     const navigate = useNavigate();
 
     return (
-        <div className="h-screen w-screen bg-gray-900 overflow-hidden flex">
+        <div className="min-h-screen w-screen bg-gray-900 overflow-hidden flex flex-col lg:flex-row">
             {/* Left Side - Animation */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-purple-900/50 via-gray-900 to-gray-900 p-8">
-                <div className="w-full max-w-20xl">
+            <div className="w-full lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-purple-900/50 via-gray-900 to-gray-900 p-4 sm:p-8 h-[40vh] lg:h-screen">
+                <div className="w-full max-w-md lg:max-w-xl">
                     <DotLottieReact
                         src="/animations/PageNotFound404.lottie"
                         autoplay
@@ -17,14 +17,13 @@ function ErrorPage() {
                 </div>
             </div>
 
-            {/* Right Side - Content */}
+            {/* Right Side - Content (Desktop) */}
             <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-gradient-to-bl from-gray-900 via-purple-900/30 to-gray-900 p-12 relative">
                 {/* Decorative Background Elements */}
                 <div className="absolute top-20 right-20 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-20 left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
 
                 <div className="z-10 space-y-8 text-center max-w-lg">
-                    {/* Error Code */}
                     <div className="relative">
                         <h1 className="text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
                             404
@@ -34,7 +33,6 @@ function ErrorPage() {
                         </div>
                     </div>
 
-                    {/* Error Message */}
                     <div className="space-y-4">
                         <h2 className="text-4xl font-bold text-white">Lost in Space?</h2>
                         <p className="text-gray-400 text-lg leading-relaxed">
@@ -43,7 +41,6 @@ function ErrorPage() {
                         </p>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex justify-center pt-4">
                         <button
                             onClick={() => navigate(-1)}
@@ -58,7 +55,6 @@ function ErrorPage() {
                         </button>
                     </div>
 
-                    {/* Animated Dots */}
                     <div className="flex justify-center gap-3 pt-8">
                         <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
                         <div className="w-3 h-3 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></div>
@@ -68,13 +64,16 @@ function ErrorPage() {
             </div>
 
             {/* Mobile Content - Shown below animation on small screens */}
-            <div className="lg:hidden absolute inset-0 flex items-end pb-16 px-6">
-                <div className="w-full text-center space-y-6 bg-gray-900/90 backdrop-blur-sm p-6 rounded-2xl">
-                    <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+            <div className="lg:hidden flex-1 flex items-center justify-center px-4 pb-8 sm:px-6">
+                <div className="w-full text-center space-y-5 max-w-sm">
+                    <h1 className="text-6xl sm:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
                         404
                     </h1>
-                    <h2 className="text-2xl font-bold text-white">Page Not Found</h2>
-                    <div className="flex flex-col gap-3">
+                    <h2 className="text-xl sm:text-2xl font-bold text-white">Page Not Found</h2>
+                    <p className="text-gray-400 text-sm">
+                        The page you're looking for doesn't exist.
+                    </p>
+                    <div className="flex flex-col gap-3 pt-2">
                         <button
                             onClick={() => navigate('/')}
                             className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:shadow-xl transition-all"

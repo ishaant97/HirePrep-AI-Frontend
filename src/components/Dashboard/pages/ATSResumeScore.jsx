@@ -148,8 +148,8 @@ function ATSResumeScore() {
         return (
             <div className="space-y-6 pb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <span className="text-3xl">📄</span>
+                    <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
+                        <span className="text-2xl sm:text-3xl">📄</span>
                         ATS Resume Score
                     </h1>
                     <p className="text-gray-400 mt-1">Detailed ATS compatibility analysis of your resume</p>
@@ -200,13 +200,13 @@ function ATSResumeScore() {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
                         <span className="text-3xl">📄</span>
                         ATS Resume Score
                     </h1>
                     <p className="text-gray-400 mt-1">Detailed ATS compatibility analysis of your resume</p>
                 </div>
-                <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                <div className="flex flex-col items-center justify-center py-16 sm:py-16 sm:py-32 space-y-4">
                     <div className="w-20 h-20 bg-gray-800/60 rounded-2xl flex items-center justify-center text-4xl">📄</div>
                     <h2 className="text-xl font-semibold text-white">No Resume Selected</h2>
                     <p className="text-gray-400 text-sm max-w-sm text-center">Select a resume from the navbar to view your ATS score.</p>
@@ -218,7 +218,7 @@ function ATSResumeScore() {
     /* ── error or failed analytics ── */
     if (analyticsError || analyticsStatus === 'failed') {
         return (
-            <div className="flex flex-col items-center justify-center py-32 space-y-4">
+            <div className="flex flex-col items-center justify-center py-16 sm:py-16 sm:py-32 space-y-4">
                 <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center text-4xl">⚠️</div>
                 <h2 className="text-xl font-semibold text-white">Analytics Generation Failed</h2>
                 <p className="text-gray-400 text-sm max-w-sm text-center">
@@ -231,7 +231,7 @@ function ATSResumeScore() {
     /* ── no ATS data yet ── */
     if (!ats) {
         return (
-            <div className="flex flex-col items-center justify-center py-32 space-y-4">
+            <div className="flex flex-col items-center justify-center py-16 sm:py-16 sm:py-32 space-y-4">
                 <div className="w-20 h-20 bg-gray-800/60 rounded-2xl flex items-center justify-center text-4xl">📊</div>
                 <h2 className="text-xl font-semibold text-white">No ATS Evaluation Yet</h2>
                 <p className="text-gray-400 text-sm max-w-sm text-center">ATS evaluation data is not available for this resume yet.</p>
@@ -245,7 +245,7 @@ function ATSResumeScore() {
         <div className="space-y-6 pb-8">
             {/* ── Header ── */}
             <div>
-                <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
                     <span className="text-3xl">📄</span>
                     ATS Resume Score
                 </h1>

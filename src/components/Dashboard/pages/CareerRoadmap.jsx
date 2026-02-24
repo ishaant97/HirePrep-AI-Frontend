@@ -112,7 +112,7 @@ function CareerRoadmap() {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
                         <span className="text-3xl">🗺️</span>
                         Career Roadmap
                     </h1>
@@ -156,13 +156,13 @@ function CareerRoadmap() {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
                         <span className="text-3xl">🗺️</span>
                         Career Roadmap
                     </h1>
                     <p className="text-gray-400 mt-1">AI-generated personalized career path</p>
                 </div>
-                <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                <div className="flex flex-col items-center justify-center py-16 sm:py-16 sm:py-32 space-y-4">
                     <div className="w-20 h-20 bg-gray-800/60 rounded-2xl flex items-center justify-center text-4xl">📄</div>
                     <h2 className="text-xl font-semibold text-white">No Resume Selected</h2>
                     <p className="text-gray-400 text-sm max-w-sm text-center">Select a resume from the navbar to view your career roadmap.</p>
@@ -176,13 +176,13 @@ function CareerRoadmap() {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
                         <span className="text-3xl">🗺️</span>
                         Career Roadmap
                     </h1>
                     <p className="text-gray-400 mt-1">AI-generated personalized career path</p>
                 </div>
-                <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                <div className="flex flex-col items-center justify-center py-16 sm:py-16 sm:py-32 space-y-4">
                     <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center text-4xl">⚠️</div>
                     <h2 className="text-xl font-semibold text-white">Analytics Generation Failed</h2>
                     <p className="text-gray-400 text-sm max-w-sm text-center">
@@ -198,13 +198,13 @@ function CareerRoadmap() {
         return (
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
                         <span className="text-3xl">🗺️</span>
                         Career Roadmap
                     </h1>
                     <p className="text-gray-400 mt-1">AI-generated personalized career path</p>
                 </div>
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-12 text-center">
+                <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-6 sm:p-12 text-center">
                     <div className="w-20 h-20 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-2xl flex items-center justify-center text-5xl mx-auto mb-6">
                         🗺️
                     </div>
@@ -227,7 +227,7 @@ function CareerRoadmap() {
         <div className="space-y-8 pb-10">
             {/* ── Page Header ── */}
             <div>
-                <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
                     <span className="text-3xl">🗺️</span>
                     Career Roadmap
                 </h1>

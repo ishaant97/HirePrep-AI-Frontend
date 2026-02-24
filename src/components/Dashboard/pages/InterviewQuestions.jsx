@@ -21,7 +21,7 @@ function InterviewQuestions() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
                         <span className="text-3xl">🎤</span>
                         Interview Questions
                     </h1>

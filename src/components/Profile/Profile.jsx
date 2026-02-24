@@ -53,7 +53,7 @@ function Profile() {
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl"></div>
                     <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
 
-                    <div className="relative p-8">
+                    <div className="relative p-4 sm:p-6 md:p-8">
                         {/* Header with Avatar */}
                         <div className="flex flex-col sm:flex-row items-center gap-6 mb-8">
                             {/* Avatar */}
@@ -104,7 +104,7 @@ function Profile() {
                         </div>
 
                         {/* Resumes Section */}
-                        <div className="bg-slate-800/30 rounded-2xl p-6 border border-slate-700/50">
+                        <div className="bg-slate-800/30 rounded-2xl p-4 sm:p-6 border border-slate-700/50">
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
@@ -171,23 +171,23 @@ function Profile() {
                                     resumes.map((resume) => (
                                         <div
                                             key={resume.id}
-                                            className={`flex items-center justify-between p-4 rounded-xl border transition-all hover:bg-slate-700/30 ${resume.isBest
+                                            className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 rounded-xl border transition-all hover:bg-slate-700/30 gap-3 sm:gap-0 ${resume.isBest
                                                 ? 'bg-emerald-500/5 border-emerald-500/30'
                                                 : 'bg-slate-800/30 border-slate-700/50'
                                                 }`}
                                         >
-                                            <div className="flex items-center gap-4">
-                                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${resume.isBest ? 'bg-emerald-500/20' : 'bg-red-500/20'
+                                            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                                                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${resume.isBest ? 'bg-emerald-500/20' : 'bg-red-500/20'
                                                     }`}>
-                                                    <svg className={`w-6 h-6 ${resume.isBest ? 'text-emerald-400' : 'text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg className={`w-5 h-5 sm:w-6 sm:h-6 ${resume.isBest ? 'text-emerald-400' : 'text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                     </svg>
                                                 </div>
-                                                <div>
-                                                    <div className="flex items-center gap-2">
-                                                        <p className="text-white font-medium">{resume.name}</p>
+                                                <div className="min-w-0">
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        <p className="text-white font-medium text-sm sm:text-base truncate">{resume.name}</p>
                                                         {resume.isBest && (
-                                                            <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full flex items-center gap-1">
+                                                            <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded-full flex items-center gap-1 flex-shrink-0">
                                                                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                                 </svg>
@@ -195,12 +195,12 @@ function Profile() {
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <p className="text-slate-500 text-sm">Uploaded {resume.uploadedAt}</p>
+                                                    <p className="text-slate-500 text-xs sm:text-sm">Uploaded {resume.uploadedAt}</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-4">
-                                                <div className="text-right">
-                                                    <p className={`text-lg font-bold ${resume.atsScore >= 85 ? 'text-emerald-400' :
+                                            <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 pl-13 sm:pl-0">
+                                                <div className="text-left sm:text-right">
+                                                    <p className={`text-base sm:text-lg font-bold ${resume.atsScore >= 85 ? 'text-emerald-400' :
                                                         resume.atsScore >= 70 ? 'text-yellow-400' : 'text-red-400'
                                                         }`}>
                                                         {resume.atsScore}%
@@ -209,13 +209,13 @@ function Profile() {
                                                 </div>
                                                 <div className="flex gap-1">
                                                     <button className="p-2 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors">
-                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                         </svg>
                                                     </button>
                                                     <button className="p-2 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors">
-                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                                         </svg>
                                                     </button>

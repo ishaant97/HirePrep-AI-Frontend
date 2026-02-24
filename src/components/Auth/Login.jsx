@@ -34,11 +34,11 @@ function Login({ onSwitchToSignup }) {
     return (
         <>
             {isLoading && <Loader message="Logging you in..." />}
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8 px-2 sm:px-0">
                 {/* Header */}
                 <div className="text-center space-y-2">
-                    <h1 className="text-3xl font-bold text-white">Welcome back</h1>
-                    <p className="text-gray-400">
+                    <h1 className="text-2xl md:text-3xl font-bold text-white">Welcome back</h1>
+                    <p className="text-sm md:text-base text-gray-400">
                         Don't have an account?{' '}
                         <button
                             onClick={onSwitchToSignup}
@@ -50,10 +50,10 @@ function Login({ onSwitchToSignup }) {
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
                     {/* Email */}
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                        <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
                             Email
                         </label>
                         <input
@@ -69,7 +69,7 @@ function Login({ onSwitchToSignup }) {
 
                     {/* Password */}
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+                        <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
                             Password
                         </label>
                         <div className="relative">
@@ -127,7 +127,7 @@ function Login({ onSwitchToSignup }) {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full py-3 bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 text-white font-semibold rounded-2xl transition-all duration-200 shadow-lg shadow-purple-800/60 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-purple-500/40 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 text-white text-sm md:text-base font-semibold rounded-2xl transition-all duration-200 shadow-lg shadow-purple-800/60 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-purple-500/40 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         {isLoading ? 'Logging in...' : 'Log in'}
                     </button>

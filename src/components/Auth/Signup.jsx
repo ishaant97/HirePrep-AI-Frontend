@@ -195,8 +195,9 @@ function Signup({ onSwitchToLogin }) {
                         </div>
                     </div>
                 )}
-            </>
-            );
+            </div>
+        </>
+    );
 }
 
-            export default Signup;
+export default Signup;

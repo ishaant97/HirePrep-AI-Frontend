@@ -4,7 +4,7 @@ import { useResume } from '../../context/ResumeContext';
 import { useNavigate } from "react-router";
 import api from '../../api/axios';
 
-function Navbar({ onOpenChat, sidebarCollapsed }) {
+function Navbar({ onOpenChat, sidebarCollapsed, onOpenMobileSidebar }) {
     const { user, logout } = useAuth();
     const { activeResumeId, setActiveResumeId, resumeList, setResumeList } = useResume();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -59,25 +59,34 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
 
     return (
         <header
-            className={`fixed top-0 right-0 h-16 bg-gray-900/80 backdrop-blur-md border-b border-purple-500/20 z-30 transition-all duration-300 ${sidebarCollapsed ? 'left-20' : 'left-72'
+            className={`fixed top-0 right-0 h-16 bg-gray-900/80 backdrop-blur-md border-b border-purple-500/20 z-30 transition-all duration-300 left-0 ${sidebarCollapsed ? 'lg:left-20' : 'lg:left-72'
                 }`}
         >
-            <div className="h-full px-6 flex items-center justify-between">
-                {/* Left Section - Page Title / Breadcrumb */}
-                <div className="flex items-center gap-4">
-                    <h2 className="text-white font-semibold text-lg">Dashboard</h2>
+            <div className="h-full px-3 sm:px-4 md:px-6 flex items-center justify-between">
+                {/* Left Section - Hamburger + Page Title */}
+                <div className="flex items-center gap-2 sm:gap-4">
+                    {/* Mobile Hamburger */}
+                    <button
+                        onClick={onOpenMobileSidebar}
+                        className="lg:hidden p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-xl transition-colors"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <h2 className="text-white font-semibold text-base sm:text-lg">Dashboard</h2>
                 </div>
 
                 {/* Right Section - Actions */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
                     {/* Resume Dropdown */}
                     <div className="relative" ref={resumeDropdownRef}>
                         <button
                             onClick={() => setIsResumeDropdownOpen(!isResumeDropdownOpen)}
-                            className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-white rounded-xl hover:bg-gray-700/50 hover:border-purple-500/30 transition-all duration-200"
+                            className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 bg-gray-800/50 border border-gray-700/50 text-white rounded-xl hover:bg-gray-700/50 hover:border-purple-500/30 transition-all duration-200"
                         >
                             <svg
-                                className="w-5 h-5 text-purple-400"
+                                className="w-5 h-5 text-purple-400 flex-shrink-0"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -89,7 +98,7 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                 />
                             </svg>
-                            <span className="font-medium text-sm max-w-[150px] truncate">
+                            <span className="hidden sm:inline font-medium text-sm max-w-[120px] md:max-w-[150px] truncate">
                                 {resumeList.find(r => r._id === activeResumeId)?.originalFileName || 'Select Resume'}
                             </span>
                             <svg
@@ -104,7 +113,7 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
 
                         {/* Resume Dropdown Menu */}
                         {isResumeDropdownOpen && (
-                            <div className="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
+                            <div className="absolute right-0 mt-3 w-72 sm:w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
                                 {/* Header */}
                                 <div className="px-5 py-4 bg-gradient-to-r from-purple-600/10 to-indigo-600/10 border-b border-purple-500/20">
                                     <div className="flex items-center gap-3">
@@ -213,7 +222,7 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
                     {/* AI Chat Button */}
                     <button
                         onClick={onOpenChat}
-                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-200 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 group"
+                        className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all duration-200 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 group"
                     >
                         <svg
                             className="w-5 h-5 group-hover:scale-110 transition-transform"
@@ -228,7 +237,7 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
                                 d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
                             />
                         </svg>
-                        <span className="font-medium">AI Chat</span>
+                        <span className="hidden sm:inline font-medium">AI Chat</span>
                         <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                     </button>
 
@@ -271,7 +280,7 @@ function Navbar({ onOpenChat, sidebarCollapsed }) {
 
                         {/* Dropdown Menu */}
                         {isProfileOpen && (
-                            <div className="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
+                            <div className="absolute right-0 mt-3 w-72 sm:w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
                                 {/* Header */}
                                 <div className="px-5 py-4 bg-gradient-to-r from-purple-600/10 to-indigo-600/10 border-b border-purple-500/20">
                                     <div className="flex items-center gap-3">
