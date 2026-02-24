@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import api from '../../api/axios';
 import { useNavigate } from "react-router";
 import { useResume } from '../../context/ResumeContext';
+import Loader from '../Loader/Loader';
 
 function ResumeUpload() {
     const navigate = useNavigate();
@@ -215,7 +216,6 @@ function ResumeUpload() {
                 setActiveResumeId(resumeId);
             }
 
-            alert("Resume saved! Generating analytics...");
             navigate('/dashboard');
         } catch (error) {
             console.error('Error uploading resume:', error);
@@ -566,6 +566,9 @@ function ResumeUpload() {
                                     {isUploading ? 'Submitting...' : 'Submit Profile'}
                                 </button>
                             </div>
+
+                            {/* Full-screen loader overlay */}
+                            {isUploading && <Loader message="Saving your profile & generating analytics..." />}
                         </div>
                     </div>
                 </div>
