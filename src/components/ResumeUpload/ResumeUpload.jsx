@@ -108,7 +108,7 @@ function ResumeUpload() {
                 backlogs: parsedData.backlogs?.toString() || '0',
                 communicationRating: parsedData.communication_rating?.toString() || '',
                 hackathon: parsedData.hackathon || 'No',
-                desiredRole: parsedData.desired_role || '',
+                // desiredRole: parsedData.desired_role || '',
                 // experienceLevel: parsedData.experience_level || 'Entry-Level',
                 experienceYears: parsedData.experienceYears?.toString() || '',
                 skills: parsedData.skills || [],
