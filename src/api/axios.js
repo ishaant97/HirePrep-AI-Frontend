@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-    // baseURL: "http://localhost:3000/api", // devlopment URL
-    baseURL: "https://hireprep-ai-backend.onrender.com/api", // production URL
+    baseURL: import.meta.env.DEV
+        ? "http://localhost:3000/api"    // development — direct to backend
+        : "/api",                         // production — proxied through Netlify
     withCredentials: true, // for cookies
 });
 
