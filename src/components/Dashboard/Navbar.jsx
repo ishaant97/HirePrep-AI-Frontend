@@ -113,7 +113,7 @@ function Navbar({ onOpenChat, sidebarCollapsed, onOpenMobileSidebar }) {
 
                         {/* Resume Dropdown Menu */}
                         {isResumeDropdownOpen && (
-                            <div className="absolute right-0 mt-3 w-72 sm:w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
+                            <div className="fixed sm:absolute left-2 right-2 sm:left-auto sm:right-0 mt-3 sm:w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
                                 {/* Header */}
                                 <div className="px-5 py-4 bg-gradient-to-r from-purple-600/10 to-indigo-600/10 border-b border-purple-500/20">
                                     <div className="flex items-center gap-3">
@@ -280,7 +280,7 @@ function Navbar({ onOpenChat, sidebarCollapsed, onOpenMobileSidebar }) {
 
                         {/* Dropdown Menu */}
                         {isProfileOpen && (
-                            <div className="absolute right-0 mt-3 w-72 sm:w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
+                            <div className="fixed sm:absolute left-2 right-2 sm:left-auto sm:right-0 mt-3 sm:w-80 origin-top-right rounded-2xl border border-purple-500/20 bg-gray-900/95 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden animate-fadeIn z-50">
                                 {/* Header */}
                                 <div className="px-5 py-4 bg-gradient-to-r from-purple-600/10 to-indigo-600/10 border-b border-purple-500/20">
                                     <div className="flex items-center gap-3">

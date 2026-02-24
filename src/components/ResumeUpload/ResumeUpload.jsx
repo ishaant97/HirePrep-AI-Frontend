@@ -237,14 +237,14 @@ function ResumeUpload() {
     const textareaClass = 'w-full rounded-lg border border-purple-500/40 bg-gray-700/70 px-3 py-2.5 text-sm text-white placeholder-gray-400 shadow-sm focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 resize-y min-h-[90px]';
 
     return (
-        <div className="min-h-screen w-screen overflow-x-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-3 sm:px-4 py-4 sm:py-8 flex flex-col items-center">
-            <div className="w-full max-w-7xl flex flex-col h-full space-y-4 sm:space-y-6">
+        <div className="min-h-screen lg:h-screen lg:max-h-screen w-full overflow-x-hidden lg:overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-3 sm:px-4 py-4 sm:py-8 flex flex-col items-center">
+            <div className="w-full max-w-7xl flex flex-col lg:h-full lg:min-h-0 space-y-4 sm:space-y-6">
                 <div className="text-center text-white space-y-1 shrink-0">
                     <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold tracking-tight drop-shadow-lg">HirePrep AI - Profile Builder</h1>
                     <p className="text-xs sm:text-sm md:text-lg text-purple-200/80">Upload your resume and provide details for Placement Prediction & Analysis</p>
                 </div>
 
-                <div className="grid gap-4 sm:gap-6 lg:grid-cols-[360px_minmax(0,1fr)] flex-1 min-h-0 lg:overflow-hidden pb-4">
+                <div className="grid gap-4 sm:gap-6 lg:grid-cols-[360px_minmax(0,1fr)] lg:flex-1 lg:min-h-0 lg:overflow-hidden pb-4">
                     {/* Left Section - Resume Upload Only */}
                     <div className="lg:h-full overflow-y-auto pr-0 lg:pr-2 custom-scrollbar space-y-4 sm:space-y-6">
                         <div className="rounded-2xl bg-gray-900/40 backdrop-blur-xl shadow-2xl p-4 sm:p-6 space-y-4 border border-white/10">
