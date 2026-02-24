@@ -96,7 +96,8 @@ function ResumeUpload() {
             // console.log(parsedData);
 
             // Reset to defaults, then overlay only what the parser returned
-            setFormData({
+            setFormData(prev => ({
+                ...prev,
                 name: parsedData.name || '',
                 email: parsedData.email || '',
                 phone: parsedData.phone || '',
@@ -108,7 +109,7 @@ function ResumeUpload() {
                 backlogs: parsedData.backlogs?.toString() || '0',
                 communicationRating: parsedData.communication_rating?.toString() || '',
                 hackathon: parsedData.hackathon || 'No',
-                // desiredRole: parsedData.desired_role || '',
+                desiredRole: parsedData.desired_role || prev.desiredRole || '',
                 // experienceLevel: parsedData.experience_level || 'Entry-Level',
                 experienceYears: parsedData.experienceYears?.toString() || '',
                 skills: parsedData.skills || [],
@@ -117,7 +118,7 @@ function ResumeUpload() {
                 internships: parsedData.internships?.length > 0
                     ? parsedData.internships
                     : [{ company: '', role: '' }]
-            });
+            }));
 
             setIsParsing(false);
         } catch (error) {
@@ -167,6 +168,11 @@ function ResumeUpload() {
     ];
 
     const handleFinalUpload = async () => {
+        if (!selectedFile) {
+            alert('Please upload a resume file before submitting.');
+            return;
+        }
+
         const missing = requiredFields.filter(f => !formData[f.key]?.toString().trim());
         if (missing.length > 0) {
             alert(`Please fill in the following required fields:\n${missing.map(f => `• ${f.label}`).join('\n')}`);
@@ -178,12 +184,12 @@ function ResumeUpload() {
         try {
             // Filter out empty internships
             const validInternships = formData.internships.filter(
-                intern => intern.company.trim() && intern.role.trim()
+                intern => intern.company?.trim() && intern.role?.trim()
             );
 
             const payload = {
                 name: formData.name,
-                originalFileName: formData.originalFileName,
+                originalFileName: selectedFile?.name || formData.name || 'resume.pdf',
                 email: formData.email,
                 phone: formData.phone,
                 linkedin: formData.linkedin || undefined,
@@ -219,7 +225,13 @@ function ResumeUpload() {
             navigate('/dashboard');
         } catch (error) {
             console.error('Error uploading resume:', error);
-            alert(error.response?.data?.message || "Upload failed");
+            console.error('Response data:', error.response?.data);
+            console.error('Response status:', error.response?.status);
+            const msg = error.response?.data?.message
+                || error.response?.data?.error
+                || error.message
+                || "Upload failed";
+            alert(`Upload failed: ${msg}`);
         } finally {
             setIsUploading(false);
         }
