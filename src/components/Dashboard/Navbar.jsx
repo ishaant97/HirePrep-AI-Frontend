@@ -179,8 +179,10 @@ function Navbar({ onOpenChat, sidebarCollapsed, onOpenMobileSidebar }) {
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        // window.open(`http://localhost:3000/api/resume/view/${resume._id}`, '_blank'); // development URL
-                                                        window.open(`https://hireprep-ai-backend.onrender.com/api/resume/view/${resume._id}`, '_blank'); // production URL
+                                                        const viewUrl = import.meta.env.DEV
+                                                            ? `http://localhost:3000/api/resume/view/${resume._id}`   // development — direct to backend
+                                                            : `/api/resume/view/${resume._id}`;                        // production — proxied through Netlify (keeps cookies first-party)
+                                                        window.open(viewUrl, '_blank');
                                                     }}
                                                     className="p-2 rounded-lg bg-gray-800/50 hover:bg-purple-500/20 text-gray-400 hover:text-purple-400 transition-all duration-200 opacity-0 group-hover:opacity-100 flex-shrink-0"
                                                     title="View Resume"
