@@ -1,3 +1,5 @@
+import logo from "../../assets/images/logo.jpeg";
+
 const menuItems = [
     { id: 'overview', label: 'Overview', icon: '🏠' },
     { id: 'placement', label: 'Placement Probability', icon: '📊' },
@@ -19,17 +21,9 @@ function Sidebar({ activeSection, onSectionChange, isCollapsed, onToggleCollapse
                     }`}
             >
                 {/* Logo Section */}
-                <div className="p-4 border-b border-purple-500/20">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
-                            <span className="text-white font-bold text-lg">H</span>
-                        </div>
-                        {!isCollapsed && (
-                            <div>
-                                <h1 className="text-white font-bold text-lg">HirePrep</h1>
-                                <p className="text-gray-400 text-xs">Career Assistant</p>
-                            </div>
-                        )}
+                <div className={`${isCollapsed ? 'px-2 py-3' : 'px-3 py-2'} border-b border-purple-500/20`}>
+                    <div className="flex items-center justify-center">
+                        <img src={logo} alt="HirePrep AI Logo" className={`${isCollapsed ? 'w-12 h-12 rounded-lg' : 'w-full h-auto rounded-xl'} object-contain transition-all duration-300`} />
                     </div>
                 </div>
 
@@ -103,15 +97,9 @@ function Sidebar({ activeSection, onSectionChange, isCollapsed, onToggleCollapse
                     }`}
             >
                 {/* Mobile Logo + Close */}
-                <div className="p-4 border-b border-purple-500/20 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
-                            <span className="text-white font-bold text-lg">H</span>
-                        </div>
-                        <div>
-                            <h1 className="text-white font-bold text-lg">HirePrep</h1>
-                            <p className="text-gray-400 text-xs">Career Assistant</p>
-                        </div>
+                <div className="px-3 py-2 border-b border-purple-500/20 flex items-center justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                        <img src={logo} alt="HirePrep AI Logo" className="w-full max-w-[200px] h-auto object-contain rounded-xl" />
                     </div>
                     <button
                         onClick={onCloseMobileSidebar}
