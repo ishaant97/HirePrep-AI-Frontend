@@ -1,207 +1,263 @@
 import { useAuth } from '../../../context/AuthContext';
+import { useResume } from '../../../context/ResumeContext';
 
-function Overview() {
+const toPercent = (value) => {
+    if (typeof value !== 'number' || Number.isNaN(value)) return null;
+    const normalized = value <= 1 ? value * 100 : value;
+    return Math.max(0, Math.min(100, Math.round(normalized)));
+};
+
+const matchLevel = (value) => {
+    if (typeof value !== 'number') {
+        return {
+            label: 'No Data',
+            chip: 'text-gray-300 bg-gray-500/10 border-gray-400/20',
+        };
+    }
+
+    if (value >= 80) {
+        return {
+            label: 'Excellent',
+            chip: 'text-emerald-300 bg-emerald-500/15 border-emerald-400/30',
+        };
+    }
+
+    if (value >= 60) {
+        return {
+            label: 'Strong',
+            chip: 'text-yellow-300 bg-yellow-500/15 border-yellow-400/30',
+        };
+    }
+
+    if (value >= 40) {
+        return {
+            label: 'Improving',
+            chip: 'text-orange-300 bg-orange-500/15 border-orange-400/30',
+        };
+    }
+
+    return {
+        label: 'Needs Work',
+        chip: 'text-red-300 bg-red-500/15 border-red-400/30',
+    };
+};
+
+function Overview({ onNavigate }) {
     const { user } = useAuth();
+    const { analytics, analyticsStatus, analyticsLoading, analyticsError, activeResumeId } = useResume();
 
-    const statsCards = [
+    const ml = analytics?.machine_learning_evaluation;
+    const placement = ml?.placement_analysis;
+    const ats = analytics?.ats_evaluation;
+    const roadmap = analytics?.career_roadmap;
+
+    const roleRecommendations = ml?.role_recommendations || ml?.role_recommedations || [];
+
+    const normalizedRoleRecs = Array.isArray(roleRecommendations)
+        ? roleRecommendations
+            .map((item) => ({
+                role: item?.role || item?.title || 'Role',
+                score: toPercent(item?.skill_match_percent ?? item?.match_percentage ?? item?.score),
+                rank: item?.rank,
+            }))
+            .sort((a, b) => {
+                const aRank = typeof a.rank === 'number' ? a.rank : Number.MAX_SAFE_INTEGER;
+                const bRank = typeof b.rank === 'number' ? b.rank : Number.MAX_SAFE_INTEGER;
+
+                if (aRank !== bRank) return aRank - bRank;
+                return (b.score ?? -1) - (a.score ?? -1);
+            })
+        : [];
+
+    const topRole = normalizedRoleRecs[0];
+    const placementPct = toPercent(placement?.final_probability);
+    const atsScore = toPercent(ats?.ats_score);
+    const topRoleMatch = topRole?.score ?? null;
+
+    const phases = roadmap?.roadmap;
+    const phaseCount = [
+        phases?.short_term_0_3_months,
+        phases?.mid_term_3_6_months,
+        phases?.long_term_6_12_months,
+    ].filter(Boolean).length;
+
+    const availableSignals = [placementPct, atsScore, topRoleMatch].filter((value) => typeof value === 'number');
+    const overallReadiness = availableSignals.length
+        ? Math.round(availableSignals.reduce((sum, value) => sum + value, 0) / availableSignals.length)
+        : null;
+
+    const placementLevel = matchLevel(placementPct);
+    const atsLevel = matchLevel(atsScore);
+    const roleLevel = matchLevel(topRoleMatch);
+
+    const readinessData = [
         {
+            id: 'placement',
             title: 'Placement Probability',
-            value: '78%',
-            icon: '🎯',
-            color: 'from-purple-500 to-indigo-600',
-            trend: '+5% from last week',
-            trendUp: true,
+            value: placementPct != null ? `${placementPct}%` : '--',
+            icon: '📊',
+            tone: 'from-cyan-500/25 to-blue-500/25 border-cyan-500/30',
+            chip: placementLevel.chip,
+            status: placementLevel.label,
+            note: placement?.interpretation || 'Upload and process a resume to generate placement probability.',
         },
         {
-            title: 'ATS Score',
-            value: '85/100',
+            id: 'ats',
+            title: 'ATS Resume Score',
+            value: atsScore != null ? `${atsScore}/100` : '--',
             icon: '📄',
-            color: 'from-blue-500 to-cyan-500',
-            trend: 'Good score',
-            trendUp: true,
+            tone: 'from-emerald-500/25 to-teal-500/25 border-emerald-500/30',
+            chip: atsLevel.chip,
+            status: atsLevel.label,
+            note: atsScore != null
+                ? 'ATS compatibility based on 10 resume quality criteria.'
+                : 'ATS score will appear after analytics is completed.',
         },
         {
-            title: 'Skills Matched',
-            value: '12/18',
-            icon: '🧠',
-            color: 'from-green-500 to-emerald-500',
-            trend: '6 skills to improve',
-            trendUp: false,
-        },
-        {
-            title: 'Interview Ready',
-            value: '65%',
-            icon: '🎤',
-            color: 'from-orange-500 to-amber-500',
-            trend: 'Practice more',
-            trendUp: false,
+            id: 'jobs',
+            title: 'Top Role Match',
+            value: topRole
+                ? `${topRole.role}${topRoleMatch != null ? ` (${topRoleMatch}%)` : ''}`
+                : '--',
+            icon: '💼',
+            tone: 'from-violet-500/25 to-indigo-500/25 border-violet-500/30',
+            chip: roleLevel.chip,
+            status: roleLevel.label,
+            note: topRole
+                ? `Best-fit role based on current profile signals: ${topRole.role}.`
+                : 'Role recommendations will appear once ML evaluation is available.',
         },
     ];
 
-    const topJobRoles = [
-        { role: 'Full Stack Developer', match: 92 },
-        { role: 'Backend Engineer', match: 87 },
-        { role: 'Software Engineer', match: 50 },
+    const sectionCards = [
+        {
+            id: 'placement',
+            icon: '🎯',
+            title: 'Placement Probability',
+            description: 'See your ML-based hiring probability and interpretation.',
+            badge: 'Prediction Details',
+        },
+        {
+            id: 'jobs',
+            icon: '🧭',
+            title: 'Job Role Suggestions',
+            description: 'Review ranked role recommendations based on your profile.',
+            badge: normalizedRoleRecs.length ? `${normalizedRoleRecs.length} Recommendations` : 'Awaiting Data',
+        },
+        {
+            id: 'roadmap',
+            icon: '🗺️',
+            title: 'Career Roadmap',
+            description: 'Follow short, mid, and long-term milestones.',
+            badge: phaseCount ? `${phaseCount} Phases Ready` : 'Awaiting Data',
+        },
+        {
+            id: 'ats',
+            icon: '✅',
+            title: 'ATS Resume Score',
+            description: 'Track ATS strength across 10 resume quality criteria.',
+            badge: 'Breakdown Insights',
+        },
     ];
-
-    // const recentActivity = [
-    //     { action: 'Resume analyzed', time: '2 hours ago', icon: '📄' },
-    //     { action: 'Skill gap updated', time: '5 hours ago', icon: '🧠' },
-    //     { action: 'Interview questions generated', time: '1 day ago', icon: '🎤' },
-    // ];
 
     return (
-        <div className="space-y-6">
-            {/* Welcome Section */}
-            <div className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border border-purple-500/30 rounded-2xl p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="space-y-6 pb-8">
+            <div className="relative overflow-hidden rounded-3xl border border-purple-500/25 bg-gradient-to-r from-purple-600/15 via-indigo-600/10 to-cyan-600/15 p-5 sm:p-7">
+                <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-purple-500/20 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-28 left-12 h-52 w-52 rounded-full bg-cyan-500/20 blur-3xl" />
+                <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-white">
-                            Welcome back, {user?.name?.split(' ')[0] || 'User'}!
+                        <h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
+                            Welcome back, {user?.name?.split(' ')[0] || 'User'}
                         </h1>
-                        <p className="text-sm text-gray-400 mt-1">
-                            Here's your career readiness overview for today.
+                        <p className="mt-2 max-w-2xl text-sm text-gray-300 sm:text-base">
+                            This overview summarizes every analysis page so you can spot what to improve first and jump directly to the right section.
+                        </p>
+                        {analyticsLoading || analyticsStatus === 'pending' || analyticsStatus === 'processing' ? (
+                            <p className="mt-3 text-xs text-cyan-300">Live analytics are currently processing for this resume.</p>
+                        ) : null}
+                        {analyticsError || analyticsStatus === 'failed' ? (
+                            <p className="mt-3 text-xs text-red-300">{analyticsError || 'Analytics generation failed. Re-upload resume to retry.'}</p>
+                        ) : null}
+                    </div>
+
+                    <div className="rounded-xl border border-gray-700/50 bg-gray-900/45 px-4 py-3 text-sm sm:min-w-[180px]">
+                        <p className="text-gray-400">Overall Readiness</p>
+                        <p className="mt-1 text-2xl font-semibold text-emerald-300">
+                            {overallReadiness != null ? `${overallReadiness}%` : '--'}
                         </p>
                     </div>
-                    {/* <button className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-colors flex items-center gap-2 w-fit">
-                        <span>View Full Report</span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button> */}
                 </div>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                {statsCards.map((card, index) => (
+            {!activeResumeId && (
+                <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+                    Select a resume from the navbar to see live overview analytics.
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {readinessData.map((item) => (
                     <div
-                        key={index}
-                        className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4 sm:p-5 hover:border-purple-500/30 transition-all hover:shadow-lg hover:shadow-purple-500/5 cursor-pointer group"
+                        key={item.id}
+                        className={`rounded-2xl border bg-gradient-to-br p-4 ${item.tone} transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/10`}
                     >
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <p className="text-gray-400 text-xs sm:text-sm">{card.title}</p>
-                                <p className="text-2xl sm:text-3xl font-bold text-white mt-1 sm:mt-2">{card.value}</p>
-                                {/* <div className={`flex items-center gap-1 mt-2 text-xs ${card.trendUp ? 'text-green-400' : 'text-yellow-400'}`}>
-                                    {card.trendUp ? (
-                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                        </svg>
-                                    ) : (
-                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    )}
-                                    <span>{card.trend}</span>
-                                </div> */}
+                        <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                                <p className="text-xs uppercase tracking-wider text-gray-400">{item.title}</p>
+                                <p className="mt-2 text-xl font-bold text-white">{item.value}</p>
+                                <span className={`mt-2 inline-flex rounded-full border px-2 py-0.5 text-xs ${item.chip}`}>
+                                    {item.status}
+                                </span>
                             </div>
-                            <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${card.color} rounded-xl flex items-center justify-center text-xl sm:text-2xl shadow-lg group-hover:scale-110 transition-transform`}>
-                                {card.icon}
+                            <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gray-900/55 text-2xl shadow-md">
+                                {item.icon}
                             </div>
                         </div>
+                        <p className="mt-3 text-xs leading-relaxed text-gray-300">{item.note}</p>
                     </div>
                 ))}
             </div>
 
-            {/* Bottom Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-                {/* Top Job Roles */}
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4 sm:p-5">
-                    <h3 className="text-white font-semibold mb-3 sm:mb-4 flex items-center gap-2">
-                        <span className="text-xl">💼</span>
-                        Top Job Matches
-                    </h3>
-                    <div className="space-y-3">
-                        {topJobRoles.map((job, index) => (
-                            <div key={index} className="flex items-center justify-between gap-2">
-                                <span className="text-gray-300 text-sm truncate">{job.role}</span>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full"
-                                            style={{ width: `${job.match}%` }}
-                                        ></div>
+            <div className="rounded-2xl border border-gray-700/40 bg-gray-800/40 p-5 sm:p-6">
+                <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <h2 className="text-lg font-semibold text-white">Section Snapshots</h2>
+                    <p className="text-xs text-gray-400">Quickly move into a detailed analysis page</p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    {sectionCards.map((section) => (
+                        <button
+                            key={section.id}
+                            onClick={() => onNavigate?.(section.id)}
+                            className="group rounded-xl border border-gray-700/40 bg-gray-900/35 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-purple-500/35 hover:bg-gray-900/60"
+                        >
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-start gap-3">
+                                    <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-lg bg-gray-800/80 text-xl">
+                                        {section.icon}
                                     </div>
-                                    <span className="text-purple-400 text-sm font-medium w-10">{job.match}%</span>
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-semibold text-white">{section.title}</p>
+                                        <p className="mt-1 text-xs leading-relaxed text-gray-400">{section.description}</p>
+                                    </div>
                                 </div>
+                                <span className="rounded-full border border-gray-600/50 bg-gray-800/70 px-2 py-0.5 text-[11px] text-gray-300">
+                                    {section.badge}
+                                </span>
                             </div>
-                        ))}
-                    </div>
-                    <button className="mt-4 text-purple-400 hover:text-purple-300 text-sm flex items-center gap-1 transition-colors">
-                        View all suggestions
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                </div>
 
-                {/* Skill Progress */}
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-4 sm:p-5">
-                    <h3 className="text-white font-semibold mb-3 sm:mb-4 flex items-center gap-2">
-                        <span className="text-xl">🧠</span>
-                        Skill Overview
-                    </h3>
-                    <div className="relative w-40 h-40 mx-auto">
-                        <svg className="transform -rotate-90" viewBox="0 0 100 100">
-                            <circle
-                                className="text-gray-700"
-                                strokeWidth="8"
-                                stroke="currentColor"
-                                fill="transparent"
-                                r="42"
-                                cx="50"
-                                cy="50"
-                            />
-                            <circle
-                                className="text-purple-500"
-                                strokeWidth="8"
-                                strokeLinecap="round"
-                                stroke="currentColor"
-                                fill="transparent"
-                                r="42"
-                                cx="50"
-                                cy="50"
-                                strokeDasharray={`${(67 / 100) * 264} 264`}
-                            />
-                        </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-3xl font-bold text-white">67%</span>
-                            <span className="text-gray-400 text-sm">Skills Ready</span>
-                        </div>
-                    </div>
-                    <button className="mt-4 w-full text-center text-purple-400 hover:text-purple-300 text-sm transition-colors">
-                        View skill gap analysis
-                    </button>
-                </div>
-
-                {/* Recent Activity */}
-                {/* <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-5">
-                    <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                        <span className="text-xl">📈</span>
-                        Recent Activity
-                    </h3>
-                    <div className="space-y-4">
-                        {recentActivity.map((activity, index) => (
-                            <div key={index} className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center text-lg">
-                                    {activity.icon}
-                                </div>
-                                <div>
-                                    <p className="text-gray-200 text-sm">{activity.action}</p>
-                                    <p className="text-gray-500 text-xs">{activity.time}</p>
-                                </div>
+                            <div className="mt-3 flex items-center gap-1 text-xs text-purple-300 opacity-90 group-hover:text-purple-200">
+                                Open section
+                                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
                             </div>
-                        ))}
-                    </div>
-                    <button className="mt-4 text-purple-400 hover:text-purple-300 text-sm flex items-center gap-1 transition-colors">
-                        View all activity
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                </div> */}
+                        </button>
+                    ))}
+                </div>
             </div>
+
         </div>
     );
 }

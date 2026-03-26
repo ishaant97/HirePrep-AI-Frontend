@@ -7,7 +7,7 @@ const menuItems = [
     { id: 'skills', label: 'Skill Gap Analysis', icon: '🧠' },
     { id: 'roadmap', label: 'Career Roadmap', icon: '🗺️' },
     { id: 'ats', label: 'ATS Resume Score', icon: '📄' },
-    { id: 'analytics', label: 'Analytics & Graphs', icon: '📈' },
+    // { id: 'analytics', label: 'Analytics & Graphs', icon: '📈' },
     // { id: 'interview', label: 'Interview Questions', icon: '🎤' }
     // { id: 'settings', label: 'Settings', icon: '⚙️' },
 ];

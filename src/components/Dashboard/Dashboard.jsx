@@ -9,8 +9,8 @@ import {
     SkillGapAnalysis,
     CareerRoadmap,
     ATSResumeScore,
-    Analytics,
-    InterviewQuestions
+    // Analytics,
+    // InterviewQuestions
     // Settings,
 } from './pages';
 
@@ -35,7 +35,7 @@ function Dashboard() {
     const renderContent = () => {
         switch (activeSection) {
             case 'overview':
-                return <Overview />;
+                return <Overview onNavigate={handleSectionChange} />;
             case 'placement':
                 return <PlacementProbability />;
             case 'jobs':
@@ -46,8 +46,8 @@ function Dashboard() {
                 return <CareerRoadmap />;
             case 'ats':
                 return <ATSResumeScore />;
-            case 'analytics':
-                return <Analytics />;
+            // case 'analytics':
+            //     return <Analytics />;
             // case 'interview':
             //     return <InterviewQuestions />;
             // case 'settings':
