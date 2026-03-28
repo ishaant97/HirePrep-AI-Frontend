@@ -6,7 +6,7 @@ import {
     Overview,
     PlacementProbability,
     JobRoles,
-    SkillGapAnalysis,
+    // SkillGapAnalysis,
     CareerRoadmap,
     ATSResumeScore,
     // Analytics,
@@ -40,8 +40,8 @@ function Dashboard() {
                 return <PlacementProbability />;
             case 'jobs':
                 return <JobRoles />;
-            case 'skills':
-                return <SkillGapAnalysis />;
+            // case 'skills':
+            //     return <SkillGapAnalysis />;
             case 'roadmap':
                 return <CareerRoadmap />;
             case 'ats':

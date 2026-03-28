@@ -4,7 +4,7 @@ const menuItems = [
     { id: 'overview', label: 'Overview', icon: '🏠' },
     { id: 'placement', label: 'Placement Probability', icon: '📊' },
     { id: 'jobs', label: 'Job Role Suggestions', icon: '💼' },
-    { id: 'skills', label: 'Skill Gap Analysis', icon: '🧠' },
+    // { id: 'skills', label: 'Skill Gap Analysis', icon: '🧠' },
     { id: 'roadmap', label: 'Career Roadmap', icon: '🗺️' },
     { id: 'ats', label: 'ATS Resume Score', icon: '📄' },
     // { id: 'analytics', label: 'Analytics & Graphs', icon: '📈' },

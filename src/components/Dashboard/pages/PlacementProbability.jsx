@@ -235,9 +235,9 @@ function PlacementProbability() {
                             <span className="text-lg">🛠️</span>
                             Skill Readiness Analysis
                         </h3>
-                        <span className="text-xs text-gray-300 bg-gray-800/70 px-2.5 py-1 rounded-full border border-gray-700/50">
+                        {/* <span className="text-xs text-gray-300 bg-gray-800/70 px-2.5 py-1 rounded-full border border-gray-700/50">
                             {matchedSkills.length + missingSkills.length} Skills Considered
-                        </span>
+                        </span> */}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -251,10 +251,11 @@ function PlacementProbability() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         <CountCard title="Total Skills In Resume" value={totalSkillsInResume} accent="text-rose-300" />
                         <CountCard title="Matched Count" value={matchedCount} accent="text-emerald-300" />
                         <CountCard title="Missing Count" value={missingCount} accent="text-red-300" />
+                        <CountCard title="Bonus Skills" value={Math.max(0, totalSkillsInResume - matchedCount)} accent="text-blue-300" />
                     </div>
 
                     <div className="space-y-4">
