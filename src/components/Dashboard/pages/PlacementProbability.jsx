@@ -89,7 +89,9 @@ function SkillList({ title, items, tone = 'neutral' }) {
         ? 'bg-emerald-500/15 text-emerald-300 border-emerald-400/25'
         : tone === 'warn'
             ? 'bg-red-500/15 text-red-300 border-red-400/25'
-            : 'bg-gray-700/40 text-gray-300 border-gray-600/40';
+            : tone === 'info'
+                ? 'bg-blue-500/15 text-blue-300 border-blue-400/25'
+                : 'bg-gray-700/40 text-gray-300 border-gray-600/40';
 
     if (!items?.length) {
         return (
@@ -130,8 +132,18 @@ function PlacementProbability() {
     const skillMatchPercent = toPercent(skills?.skill_match_percent) ?? 0;
     const matchedSkills = Array.isArray(skills?.matched_skills) ? skills.matched_skills : [];
     const missingSkills = Array.isArray(skills?.missing_skills) ? skills.missing_skills : [];
+    const allSkills = Array.isArray(ml?.skills) ? ml.skills : [];
     const matchedCount = asCount(skills?.matched_count);
     const missingCount = asCount(skills?.missing_count);
+
+    const normalizedMatchedSkills = new Set(
+        matchedSkills
+            .filter((skill) => typeof skill === 'string')
+            .map((skill) => skill.trim().toLowerCase())
+    );
+    const bonusSkills = allSkills.filter(
+        (skill) => typeof skill === 'string' && !normalizedMatchedSkills.has(skill.trim().toLowerCase())
+    );
 
     if (analyticsLoading || analyticsStatus === 'pending' || analyticsStatus === 'processing') {
         return (
@@ -262,9 +274,10 @@ function PlacementProbability() {
                         <MetricBar title="Skill Match Percent" value={skillMatchPercent} maxValue={100} showPercent color="bg-orange-500" />
                     </div>
 
-                    <div className="pt-1 grid grid-cols-1 xl:grid-cols-2 gap-5">
+                    <div className="pt-1 grid grid-cols-1 xl:grid-cols-3 gap-5">
                         <SkillList title="Matched Skills" items={matchedSkills} tone="good" />
                         <SkillList title="Missing Skills" items={missingSkills} tone="warn" />
+                        <SkillList title="Bonus Skills" items={bonusSkills} tone="info" />
                     </div>
                 </div>
             </div>
